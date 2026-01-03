@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from typing import Optional
-from uuid import UUID
 
+from uuid import UUID
 from app.core.database import get_db
 from app.schemas.note import (
     NoteCreate, 
@@ -17,10 +17,7 @@ router = APIRouter(prefix="/notes", tags=["notes"])
 
 
 @router.post("/", response_model=NoteResponse, status_code=status.HTTP_201_CREATED)
-def create_note(
-    note: NoteCreate,
-    db: Session = Depends(get_db)
-):
+def create_note(note: NoteCreate, db: Session = Depends(get_db)):
     """Create a new note"""
     created_note = NoteService.create_note(db, note)
     return created_note
@@ -46,10 +43,7 @@ def list_notes(
 
 
 @router.get("/{note_id}", response_model=NoteResponse)
-def get_note(
-    note_id: UUID,
-    db: Session = Depends(get_db)
-):
+def get_note(note_id: UUID, db: Session = Depends(get_db)):
     """Get a single note by ID"""
     note = NoteService.get_note(db, note_id)
     
@@ -63,11 +57,7 @@ def get_note(
 
 
 @router.put("/{note_id}", response_model=NoteResponse)
-def update_note(
-    note_id: UUID,
-    note_update: NoteUpdate,
-    db: Session = Depends(get_db)
-):
+def update_note(note_id: UUID, note_update: NoteUpdate, db: Session = Depends(get_db)):
     """Update an existing note"""
     updated_note = NoteService.update_note(db, note_id, note_update)
     
@@ -81,10 +71,7 @@ def update_note(
 
 
 @router.delete("/{note_id}", response_model=NoteDeleteResponse)
-def delete_note(
-    note_id: UUID,
-    db: Session = Depends(get_db)
-):
+def delete_note(note_id: UUID, db: Session = Depends(get_db)):
     """Delete a note"""
     deleted = NoteService.delete_note(db, note_id)
     

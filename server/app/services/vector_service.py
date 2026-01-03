@@ -23,7 +23,6 @@ class VectorService:
         Returns:
             List of (Note, similarity_score) tuples, ordered by relevance
         """
-        from sqlalchemy import func
         
         # Calculate similarity: 1 - cosine_distance = cosine_similarity
         similarity_expr = 1 - Note.embedding.cosine_distance(query_embedding)

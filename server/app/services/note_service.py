@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func
 from typing import List, Optional
+
 from uuid import UUID
 from app.models.note import Note
 from app.schemas.note import NoteCreate, NoteUpdate

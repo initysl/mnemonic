@@ -1,3 +1,8 @@
-from app.api.v1.notes import router as notes_router
+from fastapi import APIRouter
+from app.api.v1 import notes, search, health
 
-__all__ = ["notes_router"]
+api_router = APIRouter()
+
+api_router.include_router(notes.router)
+api_router.include_router(search.router)
+api_router.include_router(health.router)

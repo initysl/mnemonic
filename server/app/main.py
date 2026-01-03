@@ -1,13 +1,12 @@
 from dotenv import load_dotenv
 load_dotenv()
 from fastapi import FastAPI
+
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from contextlib import asynccontextmanager
 from app.core.database import engine, Base
-from app.api.v1 import notes_router
-from app.api.v1.search import router as search_router
-from app.api.v1.health import router as health_router
+from app.api.v1 import api_router
 
 
 @asynccontextmanager
@@ -36,9 +35,7 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(health_router)
-app.include_router(notes_router)
-app.include_router(search_router)
+app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/")
 def root():
