@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+
+
+# VSCode / IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.local
+
+
+# Database / migrations
+*.db
+migrations/versions/*.pyc
+migrations/versions/__pycache__/
+
+# MacOS
+.DS_Store
+
+# Docker
+*.dockerignore
+docker-compose.override.yml
+
+# txt, sh
+ts.txt
+setup.sh
