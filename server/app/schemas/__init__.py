@@ -1,9 +1,14 @@
 from app.schemas.note import (
     NoteCreate,
-    NoteUpdate,
+    NoteUpdate, 
     NoteResponse,
     NoteListResponse,
     NoteDeleteResponse
+)
+from app.schemas.search import (
+    SearchRequest,
+    SearchResultItem,
+    SearchResponse
 )
 
 __all__ = [
@@ -11,5 +16,8 @@ __all__ = [
     "NoteUpdate", 
     "NoteResponse",
     "NoteListResponse",
-    "NoteDeleteResponse"
+    "NoteDeleteResponse",
+    "SearchRequest",
+    "SearchResultItem",
+    "SearchResponse"
 ]

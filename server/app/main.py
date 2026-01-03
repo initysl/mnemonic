@@ -6,6 +6,7 @@ import uvicorn
 from contextlib import asynccontextmanager
 from app.core.database import engine, Base
 from app.api.v1 import notes_router
+from app.api.v1.search import router as search_router
 from app.api.v1.health import router as health_router
 
 
@@ -37,7 +38,7 @@ app.add_middleware(
 # Include routers
 app.include_router(health_router)
 app.include_router(notes_router)
-
+app.include_router(search_router)
 
 @app.get("/")
 def root():
