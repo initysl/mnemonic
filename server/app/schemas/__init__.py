@@ -15,6 +15,11 @@ from app.schemas.voice import (
     VoiceQueryResponse,
     VoiceSearchResult
 )
+from app.schemas.query import (
+    EnhancedQueryRequest,
+    RetrievedNote,
+    EnhancedQueryResponse
+)
 
 __all__ = [
     "NoteCreate",
@@ -27,5 +32,8 @@ __all__ = [
     "SearchResponse",
     "TranscriptionResponse",
     "VoiceQueryResponse",
-    "VoiceSearchResult"
+    "VoiceSearchResult",
+    "EnhancedQueryRequest",
+    "RetrievedNote",
+    "EnhancedQueryResponse"
 ]

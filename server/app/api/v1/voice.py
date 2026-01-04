@@ -19,7 +19,6 @@ async def transcribe_audio(
 ):
     """
     Transcribe audio file to text using Groq Whisper
-    
     Upload an audio file and get back the transcribed text
     """
     try:

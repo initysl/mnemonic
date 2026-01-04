@@ -1,4 +1,5 @@
 import os
+import os as os_module
 from groq import Groq
 from fastapi import UploadFile
 import tempfile
@@ -31,11 +32,9 @@ class VoiceService:
     ) -> str:
         """
         Transcribe audio file to text using Groq Whisper
-        
         Args:
             audio_file: Uploaded audio file
             language: Optional language code (e.g., 'en', 'es')
-            
         Returns:
             Transcribed text
         """
@@ -71,7 +70,6 @@ class VoiceService:
         
         finally:
             # Clean up temporary file
-            import os as os_module
             try:
                 os_module.unlink(temp_file_path)
             except Exception:

@@ -1,10 +1,10 @@
 import requests
 import time
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://localhost:8000/api/v1"
 
-def test_phase3():
-    print("=== Phase 3: Embedding & Vector Search ===\n")
+def test_embedding():
+    print("Embedding & Vector Search\n")
     
     # 1. Create sample notes
     print("1. Creating sample notes with embeddings...")
@@ -21,10 +21,10 @@ def test_phase3():
         response = requests.post(f"{BASE_URL}/notes/", json=note_data)
         if response.status_code == 201:
             note_ids.append(response.json()["id"])
-            print(f"  ✓ Created: {note_data['title']}")
+            print(f"Created: {note_data['title']}")
             time.sleep(1)  # Rate limit for HF API
         else:
-            print(f"  ❌ Failed: {note_data['title']}")
+            print(f"Failed: {note_data['title']}")
     
     print(f"\n  Total notes created: {len(note_ids)}\n")
     
@@ -51,10 +51,10 @@ def test_phase3():
             for result in data['results']:
                 print(f"    - {result['title']} (score: {result['similarity_score']})")
         else:
-            print(f"  ❌ Search failed: {response.text}")
+            print(f"Search failed: {response.text}")
         print()
     
-    print("✅ Phase 3 Complete!")
+    print("Embedding & Vector Search Test Complete!")
 
 if __name__ == "__main__":
-    test_phase3()
+    test_embedding()
