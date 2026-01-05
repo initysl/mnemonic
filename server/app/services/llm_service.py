@@ -5,7 +5,7 @@ from tenacity import retry, wait_exponential, stop_after_attempt
 
 
 class LLMService:
-    """Generate intelligent responses using Groq LLM"""
+    """Generate intelligent responses using llama"""
     
     def __init__(self):
         api_key = os.getenv("GROQ_API_KEY")
@@ -28,7 +28,6 @@ class LLMService:
             query: User's original question
             retrieved_notes: List of note dicts with title, content, similarity
             max_tokens: Maximum response length
-            
         Returns:
             Dict with 'answer' and 'cited_notes' (list of note IDs used)
         """
@@ -50,7 +49,7 @@ class LLMService:
         
         context = "\n\n".join(context_parts)
         
-        # Create prompt
+        # Prompt
         prompt = f"""You are a helpful assistant that synthesizes information from personal notes.
 
             Retrieved Notes:
@@ -113,7 +112,6 @@ class LLMService:
             query: Original query
             answer: Generated answer
             retrieved_notes: Notes used
-            
         Returns:
             List of 3 follow-up questions
         """

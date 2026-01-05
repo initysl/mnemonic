@@ -1,7 +1,8 @@
 import os
 from huggingface_hub import InferenceClient
 from typing import List
-
+from app.utils.logger import logger
+from app.utils.exceptions import EmbeddingGenerationError
 
 class EmbeddingService:
     """Generate embeddings using HuggingFace Inference API"""
@@ -17,6 +18,7 @@ class EmbeddingService:
         )
         
         self.model = "sentence-transformers/all-MiniLM-L6-v2"
+        logger.info(f"Initialized EmbeddingService with model: {self.model}")
     
     def generate_embedding(self, text: str) -> List[float]:
         """
@@ -27,10 +29,11 @@ class EmbeddingService:
             List of 384 floats representing the embedding
         """
         if not text or not text.strip():
+            logger.error("Empty text provided for embedding")
             raise ValueError("Text cannot be empty")
         
         try:
-            # InferenceClient returns the embedding directly
+            logger.debug(f"Generating embedding for text (length: {len(text)})")
             embedding = self.client.feature_extraction(
                 text=text,
                 model=self.model
@@ -42,13 +45,18 @@ class EmbeddingService:
             
             # Validate dimensions
             if len(embedding) != 384:
-                raise ValueError(f"Expected 384 dimensions, got {len(embedding)}")
-            
+                logger.error(f"Unexpected embedding dimensions: {len(embedding)}")
+                raise EmbeddingGenerationError(
+                    f"Expected 384 dimensions, got {len(embedding)}"
+                )
+            logger.debug(f"Successfully generated embedding")
             return embedding # type: ignore
             
         except Exception as e:
-            # Re-raise with context
-            raise Exception(f"Embedding generation failed: {str(e)}")
+            logger.error(f"Embedding generation failed: {str(e)}", exc_info=True)
+            raise EmbeddingGenerationError(
+                f"Failed to generate embedding: {str(e)}"
+            )
     
     def generate_batch_embeddings(self, texts: List[str]) -> List[List[float]]:
         """
@@ -58,6 +66,7 @@ class EmbeddingService:
         Returns:
             List of embeddings
         """
+        logger.info(f"Generating embeddings for {len(texts)} texts")
         return [self.generate_embedding(text) for text in texts]
 
 
