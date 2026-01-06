@@ -21,13 +21,9 @@ class EmbeddingService:
         logger.info(f"Initialized EmbeddingService with model: {self.model}")
     
     def generate_embedding(self, text: str) -> List[float]:
-        """
-        Generate 384-dimensional embedding for text
-        Args:
-            text: Input text to embed
-        Returns:
-            List of 384 floats representing the embedding
-        """
+
+        """Generate embedding for text"""
+        
         if not text or not text.strip():
             logger.error("Empty text provided for embedding")
             raise ValueError("Text cannot be empty")

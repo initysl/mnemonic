@@ -58,14 +58,14 @@ def enhanced_text_query(
         retrieved_notes=retrieved_notes_data
     )
     
-    # 4. Follow-up questions (optional)
-    follow_ups = None
-    if request.include_follow_ups and retrieved_notes_data:
-        follow_ups = llm_service.generate_follow_up_questions(
-            query=request.query,
-            answer=llm_response["answer"],
-            retrieved_notes=retrieved_notes_data
-        )
+    # # 4. Follow-up questions (optional)
+    # follow_ups = None
+    # if request.include_follow_ups and retrieved_notes_data:
+    #     follow_ups = llm_service.generate_follow_up_questions(
+    #         query=request.query,
+    #         answer=llm_response["answer"],
+    #         retrieved_notes=retrieved_notes_data
+    #     )
     
     # Determine confidence based on similarity scores
     if results and results[0][1] > 0.7:
@@ -96,7 +96,7 @@ def enhanced_text_query(
         confidence=confidence,
         retrieved_notes=retrieved_notes,
         cited_notes=[note.id for note in retrieved_notes if str(note.id) in llm_response["cited_notes"]],
-        follow_up_questions=follow_ups,
+        # follow_up_questions=follow_ups,
         execution_time_ms=round(execution_time, 2)
     )
 
@@ -106,7 +106,7 @@ async def enhanced_voice_query(
     audio: UploadFile = File(..., description="Audio query file"),
     top_k: int = QueryParam(5, ge=1, le=10),
     min_similarity: float = QueryParam(0.3, ge=0.0, le=1.0),
-    include_follow_ups: bool = QueryParam(True),
+    # include_follow_ups: bool = QueryParam(True),
     language: Optional[str] = QueryParam(None),
     db: Session = Depends(get_db)
 ):
@@ -151,13 +151,13 @@ async def enhanced_voice_query(
         retrieved_notes=retrieved_notes_data
     )
     
-    follow_ups = None
-    if include_follow_ups and retrieved_notes_data:
-        follow_ups = llm_service.generate_follow_up_questions(
-            query=transcribed_text,
-            answer=llm_response["answer"],
-            retrieved_notes=retrieved_notes_data
-        )
+    # follow_ups = None
+    # if include_follow_ups and retrieved_notes_data:
+    #     follow_ups = llm_service.generate_follow_up_questions(
+    #         query=transcribed_text,
+    #         answer=llm_response["answer"],
+    #         retrieved_notes=retrieved_notes_data
+    #     )
     
     confidence = "high" if results and results[0][1] > 0.7 else "medium" if results and results[0][1] > 0.5 else "low"
     
@@ -181,6 +181,6 @@ async def enhanced_voice_query(
         confidence=confidence,
         retrieved_notes=retrieved_notes,
         cited_notes=[note.id for note in retrieved_notes if str(note.id) in llm_response["cited_notes"]],
-        follow_up_questions=follow_ups,
+        # follow_up_questions=follow_ups,
         execution_time_ms=round(execution_time, 2)
     )

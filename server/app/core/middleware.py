@@ -11,7 +11,7 @@ class TimingMiddleware(BaseHTTPMiddleware):
         start_time = time.time()
         
         # Log incoming request
-        logger.info(f"→ {request.method} {request.url.path}")
+        logger.info(f"{request.method} {request.url.path}")
         
         try:
             response = await call_next(request)

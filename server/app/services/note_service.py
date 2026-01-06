@@ -8,7 +8,7 @@ from app.services.embedding_service import embedding_service
 
 
 class NoteService:
-    """Business logic for note operations"""
+    """Logic for note operations"""
     
     @staticmethod
     def create_note(db: Session, note_data: NoteCreate) -> Note:

@@ -79,9 +79,9 @@ class LLMService:
                         "content": prompt
                     }
                 ],
-                temperature=0.7,
+                temperature=0.4,
                 max_tokens=max_tokens,
-                top_p=0.9
+                top_p=0.2
             )
             
             answer = response.choices[0].message.content.strip() if response.choices[0].message.content else "Sorry, I couldn't generate a response."
@@ -100,44 +100,44 @@ class LLMService:
         except Exception as e:
             raise Exception(f"LLM reasoning failed: {str(e)}")
     
-    def generate_follow_up_questions(
-        self,
-        query: str,
-        answer: str,
-        retrieved_notes: List[Dict[str, Any]]
-    ) -> List[str]:
-        """
-        Generate relevant follow-up questions based on the conversation
-        Args:
-            query: Original query
-            answer: Generated answer
-            retrieved_notes: Notes used
-        Returns:
-            List of 3 follow-up questions
-        """
-        note_titles = [note['title'] for note in retrieved_notes[:3]]
+    # def generate_follow_up_questions(
+    #     self,
+    #     query: str,
+    #     answer: str,
+    #     retrieved_notes: List[Dict[str, Any]]
+    # ) -> List[str]:
+    #     """
+    #     Generate relevant follow-up questions based on the conversation
+    #     Args:
+    #         query: Original query
+    #         answer: Generated answer
+    #         retrieved_notes: Notes used
+    #     Returns:
+    #         List of 3 follow-up questions
+    #     """
+    #     note_titles = [note['title'] for note in retrieved_notes[:3]]
         
-        prompt = f"""Based on this Q&A exchange, suggest 3 relevant follow-up questions the user might ask.
+    #     prompt = f"""Based on this Q&A exchange, suggest 3 relevant follow-up questions the user might ask.
 
-            Question: {query}
-            Answer: {answer}
-            Related Notes: {', '.join(note_titles)}
+    #         Question: {query}
+    #         Answer: {answer}
+    #         Related Notes: {', '.join(note_titles)}
 
-            Generate exactly 3 brief, specific follow-up questions (one per line, no numbering):"""
+    #         Generate exactly 3 brief, specific follow-up questions (one per line, no numbering):"""
 
-        try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.8,
-                max_tokens=150
-            )
+    #     try:
+    #         response = self.client.chat.completions.create(
+    #             model=self.model,
+    #             messages=[{"role": "user", "content": prompt}],
+    #             temperature=0.8,
+    #             max_tokens=150
+    #         )
             
-            questions = response.choices[0].message.content.strip().split('\n') if response.choices[0].message.content else "Sorry, I couldn't generate a response."
-            # Clean up and return first 3
-            return [q.strip('- ').strip() for q in questions if q.strip()][:3]
+    #         questions = response.choices[0].message.content.strip().split('\n') if response.choices[0].message.content else "Sorry, I couldn't generate a response."
+    #         # Clean up and return first 3
+    #         return [q.strip('- ').strip() for q in questions if q.strip()][:3]
         
-        except Exception:
+    #     except Exception:
             return []  # Fail gracefully
 
 
