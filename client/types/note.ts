@@ -25,3 +25,13 @@ export interface NoteListResponse {
   page: number;
   page_size: number;
 }
+
+export interface NoteDeleteResponse {
+  message: string;
+  deleted_id: string;
+}
+
+export interface NoteStatsResponse {
+  total_notes: number;
+  tags_count: Record<string, number>;
+}

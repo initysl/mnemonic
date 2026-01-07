@@ -95,3 +95,14 @@ class NoteService:
         """Get all unique tags across notes"""
         result = db.query(func.unnest(Note.tags)).distinct().all()
         return [tag[0] for tag in result if tag[0]]
+    
+    @staticmethod
+    def get_note_statistics(db: Session) -> dict:
+        """Get statistics about notes"""
+        total_notes = db.query(func.count(Note.id)).scalar()
+        tags = NoteService.get_all_tags(db)
+        return {
+            "total_notes": total_notes,
+            "unique_tags": len(tags),
+            "tags": tags
+        }

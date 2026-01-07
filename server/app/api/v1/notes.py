@@ -86,8 +86,9 @@ def delete_note(note_id: UUID, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/tags/all", response_model=dict)
-def get_all_tags(db: Session = Depends(get_db)):
-    """Get all unique tags"""
-    tags = NoteService.get_all_tags(db)
-    return {"tags": tags, "count": len(tags)}
+
+@router.get("/stats", response_model=dict)
+def get_note_stats(db: Session = Depends(get_db)):
+    """Get note statistics"""
+    stats = NoteService.get_note_statistics(db)
+    return stats

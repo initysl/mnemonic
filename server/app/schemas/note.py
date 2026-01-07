@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
-from typing import List, Optional
+from typing import List, Optional, Dict
 from datetime import datetime
 from uuid import UUID
 
@@ -42,3 +42,8 @@ class NoteDeleteResponse(BaseModel):
     """Delete confirmation"""
     message: str
     deleted_id: UUID
+
+class NoteStatsResponse(BaseModel):
+    """Note statistics response"""
+    total_notes: int
+    tags_count: Dict[str, int]
