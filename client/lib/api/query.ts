@@ -1,5 +1,5 @@
 import { apiClient } from './api';
-import { QueryRequest, RetrievedNote, QueryResponse } from '@/types/query';
+import { QueryRequest, QueryResponse } from '@/types/query';
 
 export const queryAPI = {
   textQuery: async (payload: QueryRequest): Promise<QueryResponse> => {
