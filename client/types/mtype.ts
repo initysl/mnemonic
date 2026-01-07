@@ -11,9 +11,9 @@ export interface ApiErrorResponse {
   request_id?: string;
 }
 
-export type ViewMode = 'grid' | 'list';
+// export type ViewMode = 'grid' | 'list';
 
-export type ConfidenceLevel = 'high' | 'medium' | 'low';
+// export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
 export interface PaginationState {
   page: number;
