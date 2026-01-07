@@ -7,15 +7,15 @@ from app.services.voice_service import voice_service
 from app.services.embedding_service import embedding_service
 from app.services.vector_service import vector_service
 from app.services.llm_service import llm_service
-from app.schemas.query import EnhancedQueryRequest, EnhancedQueryResponse, RetrievedNote
+from app.schemas.query import QueryRequest, QueryResponse, RetrievedNote
 
 
 router = APIRouter(prefix="/query", tags=["query"])
 
 
-@router.post("/text", response_model=EnhancedQueryResponse)
-def enhanced_text_query(
-    request: EnhancedQueryRequest,
+@router.post("/text", response_model=QueryResponse)
+def text_query(
+    request: QueryRequest,
     db: Session = Depends(get_db)
 ):
     """
@@ -90,7 +90,7 @@ def enhanced_text_query(
     
     execution_time = (time.time() - start_time) * 1000
     
-    return EnhancedQueryResponse(
+    return QueryResponse(
         query=request.query,
         answer=llm_response["answer"],
         confidence=confidence,
@@ -101,8 +101,8 @@ def enhanced_text_query(
     )
 
 
-@router.post("/voice", response_model=EnhancedQueryResponse)
-async def enhanced_voice_query(
+@router.post("/voice", response_model=QueryResponse)
+async def voice_query(
     audio: UploadFile = File(..., description="Audio query file"),
     top_k: int = QueryParam(5, ge=1, le=10),
     min_similarity: float = QueryParam(0.3, ge=0.0, le=1.0),
@@ -175,7 +175,7 @@ async def enhanced_voice_query(
     
     execution_time = (time.time() - start_time) * 1000
     
-    return EnhancedQueryResponse(
+    return QueryResponse(
         query=transcribed_text,
         answer=llm_response["answer"],
         confidence=confidence,

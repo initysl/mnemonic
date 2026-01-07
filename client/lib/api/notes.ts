@@ -4,7 +4,7 @@ import { Note, NoteCreate, NoteUpdate, NoteListResponse } from '@/types/note';
 export const noteAPI = {
   createNote: async (payload: NoteCreate): Promise<Note> => {
     try {
-      const { data } = await apiClient.post<Note>('/notes/', payload);
+      const { data } = await apiClient.post<Note>('/notes', payload);
       return data;
     } catch (error) {
       console.error('Failed to create note:', error);

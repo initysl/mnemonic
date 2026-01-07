@@ -1,4 +1,4 @@
-export interface EnhancedQueryRequest {
+export interface QueryRequest {
   query: string;
   top_k?: number;
   min_similarity?: number;
@@ -14,7 +14,7 @@ export interface RetrievedNote {
   created_at: string;
 }
 
-export interface EnhancedQueryResponse {
+export interface QueryResponse {
   query: string;
   answer: string;
   confidence: 'high' | 'medium' | 'low';

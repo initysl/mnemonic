@@ -4,7 +4,7 @@ from uuid import UUID
 from datetime import datetime
 
 
-class EnhancedQueryRequest(BaseModel):
+class QueryRequest(BaseModel):
     """Request for LLM-powered query"""
     query: str = Field(..., min_length=1, description="User's question")
     top_k: int = Field(5, ge=1, le=10, description="Number of notes to retrieve")
@@ -22,7 +22,7 @@ class RetrievedNote(BaseModel):
     created_at: datetime
 
 
-class EnhancedQueryResponse(BaseModel):
+class QueryResponse(BaseModel):
     """Response with LLM-generated answer"""
     query: str
     answer: str
