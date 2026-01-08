@@ -48,7 +48,7 @@ function QuerySuggestions() {
 
 export default function LandingPage() {
   return (
-    <main className='min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 px-3 '>
+    <main className='min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 px-3'>
       <section className='patua max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-16 '>
         <motion.div
           initial='hidden'
@@ -65,7 +65,7 @@ export default function LandingPage() {
             }}
             className='text-5xl lg:text-6xl leading-tight tracking-tight '
           >
-            {['Your memory,', 'structured.', 'searchable.'].map((line) => (
+            {['Your memory,', 'structured and', 'searchable.'].map((line) => (
               <motion.span key={line} variants={fadeUp} className='block'>
                 {line}
               </motion.span>
@@ -87,7 +87,7 @@ export default function LandingPage() {
           </p>
 
           <div className='flex items-center gap-4'>
-            <button className='rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'>
+            <button className='cursor-pointer rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'>
               Continue
             </button>
             <span className='text-sm bg-green-500 p-1 text-white'>
