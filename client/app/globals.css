@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -122,4 +122,12 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.changa {
+  font-family: var(--font-changa);
+}
+
+.patua {
+  font-family: var(--font-patua-one);
 }

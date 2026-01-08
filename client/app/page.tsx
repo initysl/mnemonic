@@ -10,35 +10,11 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
-const stagger = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.15 },
-  },
-};
-
 const QUERY_SUGGESTIONS = [
-  'What decisions did say about sport?',
+  'What did i say about porsche?',
   'What is my notes on semantic search',
-  'I updateed my grocery list yesterday, what items are on it?',
+  'I updated my grocery list yesterday, what items are on it?',
   'Show related notes about sport and health',
-];
-
-const features = [
-  {
-    title: 'Semantic Search',
-    description:
-      'Find ideas by meaning, not keywords. Mnemonic understands what you wrote.',
-  },
-  {
-    title: 'Ask Your Notes',
-    description: 'Query your knowledge base using natural language or voice.',
-  },
-  {
-    title: 'Memory That Grows',
-    description:
-      'Every note strengthens the system—connections emerge automatically.',
-  },
 ];
 
 function QuerySuggestions() {
@@ -53,7 +29,7 @@ function QuerySuggestions() {
   }, []);
 
   return (
-    <div className='relative h-5 overflow-hidden'>
+    <div className='relative h-5 overflow-hidden changa'>
       <AnimatePresence mode='wait'>
         <motion.span
           key={index}
@@ -73,32 +49,7 @@ function QuerySuggestions() {
 export default function LandingPage() {
   return (
     <main className='min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 px-3 '>
-      {/* Navbar */}
-      {/* <header className='flex items-center justify-center py-6 gap-10 sticky top-0 bg-white dark:bg-neutral-950 z-10 border-b border-neutral-200 dark:border-neutral-800 '>
-        <div className='flex items-center gap-2 text-lg font-semibold'>
-          <motion.span
-            animate={{ scale: [1, 1.03, 1] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            className='inline-flex h-8 w-8 items-center justify-center rounded-md bg-neutral-900 dark:bg-white text-white dark:text-black font-bold'
-          >
-            M
-          </motion.span>
-
-          <span>Mnemonic</span>
-        </div>
-        <div>
-          <Link href='https://github.com/initysl' target='_blank'>
-            <FaGithubSquare
-              size={30}
-              className=' text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition cursor-pointer'
-            />
-          </Link>
-        </div>
-      </header> */}
-
-      {/* Hero Section */}
-      <section className='max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-16 '>
-        {/* Left */}
+      <section className='patua max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-16 '>
         <motion.div
           initial='hidden'
           animate='visible'
@@ -112,7 +63,7 @@ export default function LandingPage() {
             variants={{
               visible: { transition: { staggerChildren: 0.12 } },
             }}
-            className='text-5xl lg:text-6xl font-semibold leading-tight tracking-tight'
+            className='text-5xl lg:text-6xl leading-tight tracking-tight '
           >
             {['Your memory,', 'structured.', 'searchable.'].map((line) => (
               <motion.span key={line} variants={fadeUp} className='block'>
@@ -121,7 +72,7 @@ export default function LandingPage() {
             ))}
           </motion.h1>
 
-          <p className='text-neutral-600 dark:text-neutral-400 max-w-xl text-lg leading-relaxed'>
+          <p className='text-neutral-600 dark:text-neutral-400 max-w-xl text-md leading-relaxed'>
             Mnemonic turns{' '}
             <span className='bg-orange-500 p-1 text-white'>
               your notes into a living knowledge base
@@ -136,7 +87,7 @@ export default function LandingPage() {
           </p>
 
           <div className='flex items-center gap-4'>
-            <button className='rounded-full bg-neutral-900 dark:bg-white px-4 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'>
+            <button className='rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'>
               Continue
             </button>
             <span className='text-sm bg-green-500 p-1 text-white'>
@@ -159,19 +110,17 @@ export default function LandingPage() {
               <span className='h-3 w-3 rounded-full bg-green-500' />
             </div>
 
-            {/* Paper Surface */}
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: 'easeOut' }}
-              className='relative rounded-xl bg-white dark:bg-neutral-100 text-neutral-900 p-6 border border-neutral-200 dark:border-neutral-300 shadow-[0_1px_0_rgba(0,0,0,0.05)] space-y-4'
+              className='changa relative rounded-xl bg-white dark:bg-neutral-100 text-neutral-900 p-6 border border-neutral-200 dark:border-neutral-300 shadow-[0_1px_0_rgba(0,0,0,0.05)] space-y-4'
             >
-              {/* Marginal meta */}
-              <span className='absolute -left-6 top-6 -rotate-90 text-xs font-serif tracking-tight leading-snug bg-white p-1'>
+              <span className='absolute -left-6 top-6 -rotate-90 text-xs tracking-tight leading-snug bg-white p-1'>
                 NOTE
               </span>
 
-              <h3 className='font-serif text-lg tracking-tight leading-snug'>
+              <h3 className='text-lg tracking-tight leading-snug'>
                 The Unchanging Icon: A Note on the Porsche 911
               </h3>
 
@@ -193,23 +142,30 @@ export default function LandingPage() {
               </span>
             </motion.div>
 
-            {/* Ask Interface */}
-            <div className='mt-5 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 px-4 py-3 space-y-1'>
+            <div className='changa mt-5 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 px-4 py-3 space-y-1'>
               <span className='text-[11px] uppercase tracking-widest text-neutral-500 dark:text-neutral-400'>
                 Ask your notes
               </span>
 
-              {/* Animated Suggestions */}
               <QuerySuggestions />
             </div>
           </div>
         </motion.div>
       </section>
 
-      {/* Footer */}
-      <footer className='py-8 text-center text-sm text-neutral-500 dark:text-neutral-400 border-t border-neutral-200 dark:border-neutral-800'>
-        © {new Date().getFullYear()} Mnemonic — remember less, think{' '}
-        <span className='bg-green-500 p-1 text-white'>better</span>.
+      <footer className='patua py-6 flex items-center justify-center gap-5 text-sm text-neutral-500 dark:text-neutral-400 border-t border-neutral-200 dark:border-neutral-800'>
+        <div>
+          © {new Date().getFullYear()} Mnemonic — remember less, think{' '}
+          <span className='bg-green-500 p-1 text-white'>better</span>
+        </div>
+        <div>
+          <Link href='https://github.com/initysl' target='_blank'>
+            <FaGithubSquare
+              size={30}
+              className=' text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition cursor-pointer'
+            />
+          </Link>
+        </div>
       </footer>
     </main>
   );
