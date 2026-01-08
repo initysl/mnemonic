@@ -72,9 +72,9 @@ function QuerySuggestions() {
 
 export default function LandingPage() {
   return (
-    <main className='min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 px-3'>
+    <main className='min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 px-3 '>
       {/* Navbar */}
-      <header className='flex items-center justify-center py-6 gap-10 sticky top-0 bg-white dark:bg-neutral-950 z-10 border-b border-neutral-200 dark:border-neutral-800'>
+      {/* <header className='flex items-center justify-center py-6 gap-10 sticky top-0 bg-white dark:bg-neutral-950 z-10 border-b border-neutral-200 dark:border-neutral-800 '>
         <div className='flex items-center gap-2 text-lg font-semibold'>
           <motion.span
             animate={{ scale: [1, 1.03, 1] }}
@@ -94,10 +94,10 @@ export default function LandingPage() {
             />
           </Link>
         </div>
-      </header>
+      </header> */}
 
       {/* Hero Section */}
-      <section className='max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-18'>
+      <section className='max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-16 '>
         {/* Left */}
         <motion.div
           initial='hidden'
@@ -203,30 +203,6 @@ export default function LandingPage() {
               <QuerySuggestions />
             </div>
           </div>
-        </motion.div>
-      </section>
-
-      {/* Features */}
-      <section className='px-8 py-24'>
-        <motion.div
-          initial='hidden'
-          whileInView='visible'
-          viewport={{ once: true }}
-          variants={stagger}
-          className='grid grid-cols-1 md:grid-cols-3 gap-10'
-        >
-          {features.map((feature) => (
-            <motion.div
-              key={feature.title}
-              variants={fadeUp}
-              className=' outline-2 outline-offset-4 outline-solid rounded-xl p-6 bg-neutral-50 dark:bg-neutral-900/40 hover:translate-y-1 hover:shadow-lg transition cursor-pointer '
-            >
-              <h3 className='text-lg font-medium mb-3'>{feature.title}</h3>
-              <p className='text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed'>
-                {feature.description}
-              </p>
-            </motion.div>
-          ))}
         </motion.div>
       </section>
 
