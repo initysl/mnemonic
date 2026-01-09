@@ -1,50 +1,57 @@
 'use client';
 
-import { Plus, Settings } from 'lucide-react';
+import { User, Settings, Plus } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
-import clsx from 'clsx';
 
-const TABS = ['All', 'Projects'];
+const categories = ['All', 'Projects', 'Meeting', 'Design'];
 
 export default function NotesTopBar() {
-  const [activeTab, setActiveTab] = useState('All');
+  const [activeCategory, setActiveCategory] = useState('All');
 
   return (
-    <div className='flex items-center justify-between rounded-2xl bg-white px-6 py-3 shadow-sm'>
-      {/* Left: User */}
-      <div className='flex items-center justify-center gap-3 h-9 w-9 rounded-full bg-indigo-500'>
-        <span className='text-sm font-medium text-white hidden sm:block'>
-          M
+    <div className='flex items-center justify-between pb-4'>
+      {/* Left: User Profile */}
+      <div className='flex items-center gap-3'>
+        <div className='w-10 h-10 rounded-full bg-linear-to-br from-blue-400 to-purple-500 flex items-center justify-center'>
+          <User size={20} className='text-white' />
+        </div>
+        <span className='hidden sm:block font-semibold text-neutral-900 dark:text-neutral-100'>
+          Your Notes
         </span>
       </div>
 
-      {/* Center: Tabs */}
-      <div className='flex items-center gap-2 rounded-full bg-neutral-100 p-1'>
-        {TABS.map((tab) => (
+      {/* Center: Category Pills */}
+      <div className='hidden md:flex items-center gap-2'>
+        {categories.map((category) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={clsx(
-              'rounded-full px-4 py-1.5 text-sm font-medium transition',
-              activeTab === tab
-                ? 'bg-indigo-500 text-white shadow-sm'
-                : 'text-neutral-600 hover:text-neutral-900'
-            )}
+            key={category}
+            onClick={() => setActiveCategory(category)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              activeCategory === category
+                ? 'bg-blue-500 text-white'
+                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+            }`}
           >
-            {tab}
+            {category}
           </button>
         ))}
-
-        {/* Add button */}
-        <button className='ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-white text-neutral-600 hover:bg-neutral-200'>
-          <Plus size={16} />
-        </button>
+        <Link
+          href='/dashboard/notes/new'
+          className='p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors'
+        >
+          <Plus size={18} />
+        </Link>
       </div>
 
       {/* Right: Settings */}
-      <button className='flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-medium text-amber-800 hover:bg-amber-200'>
-        <Settings size={16} />
-      </button>
+      <Link
+        href='/dashboard/settings'
+        className='flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors'
+      >
+        <Settings size={18} />
+        <span className='hidden sm:inline text-sm font-medium'>Settings</span>
+      </Link>
     </div>
   );
 }

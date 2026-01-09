@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Changa, Patua_One } from 'next/font/google';
 import './globals.css';
 import Provider from './provider';
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -39,7 +40,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${changa.variable} ${patua.variable} antialiased`}
       >
-        <Provider>{children}</Provider>
+        <Provider>{children}
+          <Toaster position='top-right' richColors />
+        </Provider>
       </body>
     </html>
   );
