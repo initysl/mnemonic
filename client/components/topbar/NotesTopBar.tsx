@@ -6,7 +6,11 @@ import { useState } from 'react';
 
 const categories = ['All', 'Projects', 'Meeting', 'Design'];
 
-export default function NotesTopBar() {
+interface NotesTopBarProps {
+  onCreateClick: () => void;
+}
+
+export default function NotesTopBar({ onCreateClick }: NotesTopBarProps) {
   const [activeCategory, setActiveCategory] = useState('All');
 
   return (
@@ -36,12 +40,12 @@ export default function NotesTopBar() {
             {category}
           </button>
         ))}
-        <Link
-          href='/dashboard/notes/new'
+        <button
+          onClick={onCreateClick}
           className='p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors'
         >
           <Plus size={18} />
-        </Link>
+        </button>
       </div>
 
       {/* Right: Settings */}

@@ -5,6 +5,7 @@ import {
   Loader2,
   Edit,
   Trash2,
+  Clock,
   Bold,
   Italic,
   Underline,
@@ -12,16 +13,16 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 interface NoteViewerProps {
   noteId: string | null;
+  onEditClick?: (note: any) => void;
 }
 
-export default function NoteViewer({ noteId }: NoteViewerProps) {
+export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
   const router = useRouter();
   const { data: note, isLoading } = useNote(noteId || '');
   const deleteNote = useDeleteNote();
@@ -33,7 +34,7 @@ export default function NoteViewer({ noteId }: NoteViewerProps) {
     try {
       await deleteNote.mutateAsync(noteId);
       toast.success('Note deleted successfully');
-      router.push('/dashboard');
+      setShowDeleteConfirm(false);
     } catch (error) {
       toast.error('Failed to delete note');
       console.error('Delete failed:', error);
@@ -92,13 +93,13 @@ export default function NoteViewer({ noteId }: NoteViewerProps) {
               </div>
             </div>
             <div className='flex gap-2'>
-              <Link
-                href={`/dashboard/notes/${note.id}/edit`}
+              <button
+                onClick={() => onEditClick?.(note)}
                 className='flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors text-sm font-medium'
               >
                 <Edit size={16} />
                 <span className='hidden sm:inline'>Edit</span>
-              </Link>
+              </button>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 className='p-2 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors'
