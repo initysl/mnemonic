@@ -1,54 +1,70 @@
-import clsx from 'clsx';
+'use client';
 
-type NoteCardProps = {
-  title?: string;
-  preview?: string;
-  readTime?: string;
-  date?: string;
-  isActive?: boolean;
-  onClick?: () => void;
-};
+import { Note } from '@/types/note';
+import DateBadge from '@/components/shared/DateBadge';
+import { MoreVertical, Tag } from 'lucide-react';
 
-export default function NoteCard({
-  title = 'Salsile project brief',
-  preview = 'No, going all perfect! Let me show you images of the project.',
-  readTime = '4 mins',
-  date = '14-08-2023',
-  isActive = false,
-  onClick,
-}: NoteCardProps) {
+interface NoteCardProps {
+  note: Note;
+  isSelected?: boolean;
+  onClick: () => void;
+}
+
+export default function NoteCard({ note, isSelected, onClick }: NoteCardProps) {
   return (
-    <button
+    <div
       onClick={onClick}
-      className={clsx(
-        'w-full rounded-xl p-4 text-left transition border',
-        isActive
-          ? 'bg-indigo-50 border-indigo-200'
-          : 'bg-white border-neutral-200 hover:bg-neutral-50'
-      )}
+      className={`p-4 rounded-lg border cursor-pointer transition-all ${
+        isSelected
+          ? 'bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700'
+          : 'bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700'
+      }`}
     >
-      <div className='flex gap-4'>
-        {/* Thumbnail */}
-        <div className='flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-200 text-indigo-700 font-semibold'>
-          📄
-        </div>
+      <div className='flex gap-3'>
+        <DateBadge date={note.created_at} />
 
-        {/* Content */}
-        <div className='flex-1'>
-          <h3 className='text-sm font-semibold text-neutral-900'>{title}</h3>
+        <div className='flex-1 min-w-0'>
+          <div className='flex items-start justify-between gap-2 mb-2'>
+            <h3 className='font-semibold text-base line-clamp-1'>
+              {note.title}
+            </h3>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              className='p-1 rounded hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors'
+            >
+              <MoreVertical
+                size={16}
+                className='text-neutral-500 dark:text-neutral-400'
+              />
+            </button>
+          </div>
 
-          <p className='mt-1 line-clamp-2 text-xs text-neutral-600'>
-            {preview}
+          <p className='text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 mb-3'>
+            {note.content}
           </p>
 
-          <div className='mt-2 flex items-center gap-3 text-xs text-neutral-400'>
-            <span className='rounded-full bg-neutral-100 px-2 py-0.5'>
-              {readTime}
-            </span>
-            <span>{date}</span>
-          </div>
+          {note.tags.length > 0 && (
+            <div className='flex flex-wrap gap-1.5'>
+              {note.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs text-neutral-600 dark:text-neutral-400'
+                >
+                  <Tag size={10} />
+                  {tag}
+                </span>
+              ))}
+              {note.tags.length > 3 && (
+                <span className='px-2 py-0.5 text-xs text-neutral-500'>
+                  +{note.tags.length - 3}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
-    </button>
+    </div>
   );
 }

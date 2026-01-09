@@ -12,10 +12,9 @@ export default function NotesTopBar() {
   return (
     <div className='flex items-center justify-between rounded-2xl bg-white px-6 py-3 shadow-sm'>
       {/* Left: User */}
-      <div className='flex items-center gap-3'>
-        <div className='h-9 w-9 rounded-full bg-neutral-300' />
-        <span className='text-sm font-medium text-neutral-900 hidden sm:block'>
-          Mahid Ahmed
+      <div className='flex items-center justify-center gap-3 h-9 w-9 rounded-full bg-indigo-500'>
+        <span className='text-sm font-medium text-white hidden sm:block'>
+          M
         </span>
       </div>
 
