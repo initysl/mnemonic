@@ -1,20 +1,19 @@
 'use client';
 
 import { useNote, useDeleteNote } from '@/hooks/useNotes';
+import NoteViewerSkeleton from '@/components/skeletons/NoteViewerSkeleton';
 import {
-  Loader2,
   Edit,
   Trash2,
-  Clock,
   Bold,
   Italic,
   Underline,
   Type,
   AlertTriangle,
+  Loader2,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 interface NoteViewerProps {
@@ -23,7 +22,6 @@ interface NoteViewerProps {
 }
 
 export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
-  const router = useRouter();
   const { data: note, isLoading } = useNote(noteId || '');
   const deleteNote = useDeleteNote();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -58,11 +56,7 @@ export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
   }
 
   if (isLoading) {
-    return (
-      <div className='flex items-center justify-center h-full'>
-        <Loader2 className='animate-spin text-neutral-400' size={32} />
-      </div>
-    );
+    return <NoteViewerSkeleton />;
   }
 
   if (!note) {

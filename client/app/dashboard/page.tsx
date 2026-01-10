@@ -6,7 +6,7 @@ import NoteList from '@/components/notes/NoteList';
 import NoteViewer from '@/components/notes/NoteViewer';
 import NoteQuery from '@/components/notes/NoteQuery';
 import NoteModal from '@/components/notes/NoteModal';
-import { Menu, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useCreateNote, useUpdateNote } from '@/hooks/useNotes';
 import { toast } from 'sonner';
 

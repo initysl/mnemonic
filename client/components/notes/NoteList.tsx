@@ -2,7 +2,8 @@
 
 import { useNotesList } from '@/hooks/useNotes';
 import NoteCard from './NoteCard';
-import { Loader2, SlidersHorizontal, FileText } from 'lucide-react';
+import NoteListSkeleton from '@/components/skeletons/NoteListSkeleton';
+import { SlidersHorizontal, FileText } from 'lucide-react';
 
 interface NoteListProps {
   onSelectNote: (id: string) => void;
@@ -13,11 +14,7 @@ export default function NoteList({ onSelectNote, selectedId }: NoteListProps) {
   const { data, isLoading, error } = useNotesList({ page: 1, page_size: 50 });
 
   if (isLoading) {
-    return (
-      <div className='flex items-center justify-center h-full'>
-        <Loader2 className='animate-spin text-neutral-400' size={32} />
-      </div>
-    );
+    return <NoteListSkeleton />;
   }
 
   if (error) {
