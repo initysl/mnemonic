@@ -9,6 +9,7 @@ interface NoteCardProps {
   isSelected?: boolean;
   onClick: () => void;
   index?: number;
+  showSimilarity?: boolean;
 }
 
 const cardColors = [
@@ -32,6 +33,7 @@ export default function NoteCard({
   isSelected,
   onClick,
   index = 0,
+  showSimilarity,
 }: NoteCardProps) {
   const colorIndex = index % cardColors.length;
   const bgColor = cardColors[colorIndex];
@@ -76,6 +78,11 @@ export default function NoteCard({
               {format(new Date(note.created_at), 'dd-MM-yyyy')}
             </span>
           </div>
+          {showSimilarity && note.similarity_score && (
+            <span className='flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium'>
+              {Math.round(note.similarity_score * 100)}% match
+            </span>
+          )}
         </div>
       </div>
     </div>

@@ -14,6 +14,11 @@ export default function AllNotesPage() {
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [mobileViewerOpen, setMobileViewerOpen] = useState(false);
 
+  // Search state
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchMode, setIsSearchMode] = useState(false);
+
   // Modal states
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -24,6 +29,24 @@ export default function AllNotesPage() {
 
   const handleSelectNote = (id: string) => {
     setSelectedNoteId(id);
+    setMobileViewerOpen(true);
+  };
+
+  // Handle search results from NoteQuery
+  const handleSearchResults = (results: any[], query: string) => {
+    setSearchResults(results);
+    setSearchQuery(query);
+    setIsSearchMode(results.length > 0 || query.length > 0);
+
+    // Clear selection when search changes
+    if (results.length === 0) {
+      setSelectedNoteId(null);
+    }
+  };
+
+  // Handle voice query result - auto-select first result
+  const handleVoiceResultSelect = (noteId: string) => {
+    setSelectedNoteId(noteId);
     setMobileViewerOpen(true);
   };
 
@@ -74,6 +97,8 @@ export default function AllNotesPage() {
           <NoteList
             onSelectNote={setSelectedNoteId}
             selectedId={selectedNoteId}
+            searchResults={isSearchMode ? searchResults : undefined}
+            searchQuery={searchQuery}
           />
         </section>
 
@@ -86,7 +111,10 @@ export default function AllNotesPage() {
 
           {/* Query */}
           <div className='rounded-2xl bg-white dark:bg-neutral-900 shadow-sm'>
-            <NoteQuery />
+            <NoteQuery
+              onSearchResults={handleSearchResults}
+              onVoiceResultSelect={handleVoiceResultSelect}
+            />
           </div>
         </section>
       </div>
@@ -99,10 +127,15 @@ export default function AllNotesPage() {
               <NoteList
                 onSelectNote={handleSelectNote}
                 selectedId={selectedNoteId}
+                searchResults={isSearchMode ? searchResults : undefined}
+                searchQuery={searchQuery}
               />
             </div>
             <div className='p-4 border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
-              <NoteQuery />
+              <NoteQuery
+                onSearchResults={handleSearchResults}
+                onVoiceResultSelect={handleVoiceResultSelect}
+              />
             </div>
           </>
         ) : (

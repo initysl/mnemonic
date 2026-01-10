@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function NoteCardSkeleton() {
   return (
-    <div className='p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/20'>
+    <div className='p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/20 animate-pulse'>
       <div className='flex gap-3'>
         {/* Icon Skeleton */}
         <Skeleton className='w-12 h-12 rounded-xl shrink-0' />

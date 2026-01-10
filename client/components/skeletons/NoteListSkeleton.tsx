@@ -4,7 +4,7 @@ import NoteCardSkeleton from './NoteCardSkeleton';
 
 export default function NoteListSkeleton() {
   return (
-    <div className='h-full flex flex-col'>
+    <div className='h-full flex flex-col animate-pulse'>
       {/* Header */}
       <div className='px-6 py-5 border-b border-neutral-200 dark:border-neutral-800'>
         <div className='flex items-center gap-2 mb-3'>

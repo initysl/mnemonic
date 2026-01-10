@@ -3,7 +3,7 @@ import { Type, Bold, Italic, Underline } from 'lucide-react';
 
 export default function NoteViewerSkeleton() {
   return (
-    <article className='h-full flex flex-col'>
+    <article className='h-full flex flex-col animate-pulse'>
       {/* Header */}
       <div className='p-4 md:p-6 border-b border-neutral-200 dark:border-neutral-800'>
         <div className='flex items-start justify-between mb-4'>
