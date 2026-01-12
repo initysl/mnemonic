@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { RetrievedNote } from '@/types/query'; // Import RetrievedNote
+import { RetrievedNote } from '@/types/query';
 import NotesTopBar from '@/components/topbar/NotesTopBar';
 import NoteList from '@/components/notes/NoteList';
 import NoteViewer from '@/components/notes/NoteViewer';
 import NoteQuery from '@/components/notes/NoteQuery';
 import NoteModal from '@/components/notes/NoteModal';
-import { X } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useCreateNote, useUpdateNote } from '@/hooks/useNotes';
 import { toast } from 'sonner';
 
@@ -135,7 +135,7 @@ export default function AllNotesPage() {
                 searchQuery={searchQuery}
               />
             </div>
-            <div className='p-4 border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
+            <div className='border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
               <NoteQuery
                 onSearchResults={handleSearchResults}
                 onVoiceResultSelect={handleVoiceResultSelect}
@@ -147,9 +147,9 @@ export default function AllNotesPage() {
             <div className='sticky top-0 z-10 flex items-center gap-2 p-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
               <button
                 onClick={() => setMobileViewerOpen(false)}
-                className='p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'
+                className='p-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:hover:bg-neutral-800 transition-colors'
               >
-                <X size={20} />
+                <ArrowLeft size={20} />
               </button>
               <span className='text-sm font-medium text-neutral-600 dark:text-neutral-400'>
                 Back to notes

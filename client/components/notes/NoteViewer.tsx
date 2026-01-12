@@ -74,14 +74,13 @@ export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
         <div className='p-4 md:p-6 border-b border-neutral-200 dark:border-neutral-800'>
           <div className='flex items-start justify-between mb-4'>
             <div className='flex-1'>
-              <div className='flex items-center gap-2 mb-2'>
-                <span className='text-3xl'>📝</span>
-                <h1 className='text-2xl md:text-3xl font-semibold text-neutral-900 dark:text-neutral-100'>
+              <div className='mb-2'>
+                <h1 className='text-2xl font-semibold text-neutral-900 dark:text-neutral-100'>
                   {note.title}
                 </h1>
               </div>
               <div className='flex items-center gap-2 text-sm'>
-                <span className='px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-medium'>
+                <span className='px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'>
                   {formatDistanceToNow(new Date(note.updated_at))} ago
                 </span>
               </div>
