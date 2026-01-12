@@ -127,7 +127,7 @@ export default function AllNotesPage() {
       <div className='lg:hidden flex flex-col overflow-hidden'>
         {!mobileViewerOpen ? (
           <>
-            <div className='flex-1 overflow-y-auto px-4 py-4'>
+            <div className='flex-1 overflow-y-auto py-4'>
               <NoteList
                 onSelectNote={handleSelectNote}
                 selectedId={selectedNoteId}

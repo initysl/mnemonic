@@ -158,13 +158,14 @@ export default function NoteQuery({
             onKeyDown={(e) => e.key === 'Enter' && handleTextSearch()}
             placeholder='Search your notes…'
             disabled={isSearching || isRecording}
-            className='flex-1 bg-transparent text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none disabled:opacity-50'
+            className='flex-1 bg-transparent text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none disabled:opacity-50 min-w-0'
           />
 
           {hasActiveSearch && !isSearching && (
             <button
               onClick={handleClear}
               className='flex h-9 w-9 items-center justify-center rounded-full hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors shrink-0'
+              aria-label='Clear search'
             >
               <X className='h-4 w-4 text-neutral-500' />
             </button>
@@ -178,6 +179,7 @@ export default function NoteQuery({
                 ? 'bg-red-500 text-white hover:bg-red-600 animate-pulse'
                 : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 disabled:opacity-50'
             }`}
+            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
           >
             {isRecording ? (
               <div className='h-3 w-3 rounded-sm bg-white' />
@@ -190,6 +192,7 @@ export default function NoteQuery({
             onClick={handleTextSearch}
             disabled={!query.trim() || isSearching || isRecording}
             className='flex h-9 w-9 items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0'
+            aria-label='Search'
           >
             <Send className='h-4 w-4' />
           </button>
