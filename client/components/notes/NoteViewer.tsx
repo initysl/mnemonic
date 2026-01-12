@@ -144,7 +144,7 @@ export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleteNote.isPending}
-                className='flex-1 px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors'
+                className='flex-1 px-4 py-2 text-red-600 rounded-lg border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors'
               >
                 Cancel
               </button>
