@@ -1,61 +1,103 @@
 'use client';
 
-import { User, Settings, Plus } from 'lucide-react';
+import { Settings, Plus, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
-
-const categories = ['All', 'Projects', 'Meeting', 'Design'];
+import { useState, useEffect } from 'react';
 
 interface NotesTopBarProps {
   onCreateClick: () => void;
+  isModalOpen?: boolean;
 }
 
-export default function NotesTopBar({ onCreateClick }: NotesTopBarProps) {
-  const [activeCategory, setActiveCategory] = useState('All');
+export default function NotesTopBar({
+  onCreateClick,
+  isModalOpen = false,
+}: NotesTopBarProps) {
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [activeView, setActiveView] = useState<string>('All');
+
+  // Reset to 'All' when modal closes
+  useEffect(() => {
+    if (!isModalOpen && activeView === 'Create') {
+      setActiveView('All');
+    }
+  }, [isModalOpen, activeView]);
+
+  const actions = [
+    {
+      name: 'All',
+      icon: LayoutGrid,
+      onClick: () => setActiveView('All'),
+    },
+    {
+      name: 'Create',
+      icon: Plus,
+      onClick: () => {
+        setActiveView('Create');
+        onCreateClick();
+      },
+    },
+    {
+      name: 'Settings',
+      icon: Settings,
+      href: '/dashboard/settings',
+    },
+  ];
 
   return (
-    <div className='flex items-center justify-between pb-4'>
-      {/* Left: User Profile */}
-      <div className='flex items-center gap-3'>
-        <div className='w-10 h-10 rounded-full bg-linear-to-br from-blue-400 to-purple-500 flex items-center justify-center'>
-          <User size={20} className='text-white' />
-        </div>
-        <span className='hidden sm:block font-semibold text-neutral-900 dark:text-neutral-100'>
-          Your Notes
-        </span>
-      </div>
+    <div className='flex items-center justify-center'>
+      <div className='bg-neutral-100 dark:bg-neutral-800 px-3 py-2 rounded-2xl shadow-lg'>
+        <ul className='flex items-center gap-2'>
+          {actions.map((item) => {
+            const isHovered = hoveredItem === item.name;
+            const isActive = activeView === item.name;
+            const showActive = isActive || isHovered;
 
-      {/* Center: Category Pills */}
-      <div className='hidden md:flex items-center gap-2'>
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setActiveCategory(category)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              activeCategory === category
-                ? 'bg-blue-500 text-white'
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-        <button
-          onClick={onCreateClick}
-          className='p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors'
-        >
-          <Plus size={18} />
-        </button>
-      </div>
+            const buttonContent = (
+              <>
+                <item.icon size={20} className='shrink-0' />
+                {showActive && (
+                  <span className='text-sm font-medium whitespace-nowrap'>
+                    {item.name}
+                  </span>
+                )}
+              </>
+            );
 
-      {/* Right: Settings */}
-      <Link
-        href='/dashboard/settings'
-        className='flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors'
-      >
-        <Settings size={18} />
-        <span className='hidden sm:inline text-sm font-medium'>Settings</span>
-      </Link>
+            const baseClasses =
+              'relative flex items-center gap-2 transition-all duration-300 rounded-xl';
+            const activeClasses = showActive
+              ? 'bg-blue-600 text-white px-4 py-2 shadow-md scale-105'
+              : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 p-2';
+
+            return (
+              <li key={item.name}>
+                {item.href ? (
+                  <Link
+                    href={item.href}
+                    onMouseEnter={() => setHoveredItem(item.name)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                    className={`${baseClasses} ${activeClasses}`}
+                    aria-label={item.name}
+                  >
+                    {buttonContent}
+                  </Link>
+                ) : (
+                  <button
+                    onClick={item.onClick}
+                    onMouseEnter={() => setHoveredItem(item.name)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                    className={`${baseClasses} ${activeClasses}`}
+                    aria-label={item.name}
+                  >
+                    {buttonContent}
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import {
   Bold,
   Italic,
   Underline,
-  Type,
+  NotebookText,
   AlertTriangle,
   Loader2,
 } from 'lucide-react';
@@ -43,7 +43,7 @@ export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
     return (
       <div className='flex flex-col items-center justify-center h-full p-8 text-center'>
         <div className='w-16 h-16 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4'>
-          <Type size={32} className='text-neutral-400' />
+          <NotebookText size={32} className='text-neutral-400' />
         </div>
         <p className='text-neutral-600 dark:text-neutral-400 font-medium mb-2'>
           Select a note to view
@@ -110,24 +110,6 @@ export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
             <p className='whitespace-pre-wrap leading-relaxed text-neutral-700 dark:text-neutral-300'>
               {note.content}
             </p>
-          </div>
-        </div>
-
-        {/* Text Formatting Toolbar */}
-        <div className='p-4 border-t border-neutral-200 dark:border-neutral-800'>
-          <div className='flex items-center gap-2'>
-            <button className='p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'>
-              <Type size={18} />
-            </button>
-            <button className='p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'>
-              <Bold size={18} />
-            </button>
-            <button className='p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'>
-              <Italic size={18} />
-            </button>
-            <button className='p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'>
-              <Underline size={18} />
-            </button>
           </div>
         </div>
       </article>

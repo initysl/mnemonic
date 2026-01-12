@@ -1,11 +1,13 @@
 'use client';
 
 import { Note } from '@/types/note';
-import { Clock, Calendar } from 'lucide-react';
+import { RetrievedNote } from '@/types/query';
+import DateBadge from '@/components/shared/DateBadge';
+import { Clock, Calendar, Tag } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 
 interface NoteCardProps {
-  note: Note;
+  note: Note | RetrievedNote;
   isSelected?: boolean;
   onClick: () => void;
   index?: number;
@@ -33,7 +35,7 @@ export default function NoteCard({
   isSelected,
   onClick,
   index = 0,
-  showSimilarity,
+  showSimilarity = false,
 }: NoteCardProps) {
   const colorIndex = index % cardColors.length;
   const bgColor = cardColors[colorIndex];
@@ -42,6 +44,13 @@ export default function NoteCard({
   // Calculate reading time (rough estimate: 200 words per minute)
   const wordCount = note.content.split(/\s+/).length;
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
+  // Type guard to check if note is RetrievedNote
+  const isRetrievedNote = (
+    note: Note | RetrievedNote
+  ): note is RetrievedNote => {
+    return 'similarity_score' in note;
+  };
 
   return (
     <div
@@ -68,7 +77,7 @@ export default function NoteCard({
           </p>
 
           {/* Meta */}
-          <div className='flex items-center gap-3 text-xs text-neutral-500 dark:text-neutral-500'>
+          <div className='flex items-center gap-3 text-xs text-neutral-500 dark:text-neutral-500 flex-wrap'>
             <span className='flex items-center gap-1'>
               <Clock size={12} />
               {readingTime} min{readingTime > 1 ? 's' : ''}
@@ -77,12 +86,14 @@ export default function NoteCard({
               <Calendar size={12} />
               {format(new Date(note.created_at), 'dd-MM-yyyy')}
             </span>
+
+            {/* Similarity Score for Search Results */}
+            {showSimilarity && isRetrievedNote(note) && (
+              <span className='flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-medium'>
+                {Math.round(note.similarity_score * 100)}% match
+              </span>
+            )}
           </div>
-          {showSimilarity && note.similarity_score && (
-            <span className='flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium'>
-              {Math.round(note.similarity_score * 100)}% match
-            </span>
-          )}
         </div>
       </div>
     </div>

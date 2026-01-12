@@ -55,7 +55,7 @@ export default function NoteModal({
           </h2>
           <button
             onClick={onClose}
-            className='p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'
+            className='p-2 rounded-lg text-red-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'
           >
             <X size={20} />
           </button>

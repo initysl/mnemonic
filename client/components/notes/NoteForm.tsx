@@ -63,7 +63,7 @@ export default function NoteForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder='Enter note title...'
-          className='w-full px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg'
+          className='w-full px-4 py-3 rounded-xl text-neutral-900 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg'
           required
           disabled={isLoading}
         />
@@ -83,7 +83,7 @@ export default function NoteForm({
           onChange={(e) => setContent(e.target.value)}
           placeholder='Write your note...'
           rows={16}
-          className='w-full px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none'
+          className='w-full px-4 py-3 rounded-xl text-neutral-900 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none'
           required
           disabled={isLoading}
         />
@@ -111,7 +111,7 @@ export default function NoteForm({
                 }
               }}
               placeholder='Add a tag...'
-              className='w-full pl-10 pr-4 py-2 rounded-lg bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className='w-full pl-10 pr-4 py-2 rounded-lg text-neutral-900 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
               disabled={isLoading}
             />
           </div>
@@ -140,7 +140,7 @@ export default function NoteForm({
                   type='button'
                   onClick={() => handleRemoveTag(tag)}
                   disabled={isLoading}
-                  className='hover:text-red-500 transition-colors'
+                  className=' hover:text-red-500 transition-colors'
                 >
                   <X size={14} />
                 </button>
@@ -165,7 +165,7 @@ export default function NoteForm({
             type='button'
             onClick={onCancel}
             disabled={isLoading}
-            className='px-6 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors'
+            className='px-6 py-3 rounded-xl border text-red-600 border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors'
           >
             Cancel
           </button>

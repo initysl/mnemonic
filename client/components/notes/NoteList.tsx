@@ -1,14 +1,16 @@
 'use client';
 
 import { useNotesList } from '@/hooks/useNotes';
+import { Note } from '@/types/note';
+import { RetrievedNote } from '@/types/query';
 import NoteCard from './NoteCard';
 import NoteListSkeleton from '@/components/skeletons/NoteListSkeleton';
-import { SlidersHorizontal, FileText, Search, X } from 'lucide-react';
+import { SlidersHorizontal, NotebookText, Search } from 'lucide-react';
 
 interface NoteListProps {
   onSelectNote: (id: string) => void;
   selectedId: string | null;
-  searchResults?: any[];
+  searchResults?: RetrievedNote[]; // Updated type
   searchQuery?: string;
 }
 
@@ -22,7 +24,9 @@ export default function NoteList({
 
   // Determine which notes to display
   const isSearchMode = searchResults !== undefined;
-  const displayNotes = isSearchMode ? searchResults : data?.notes || [];
+  const displayNotes: (Note | RetrievedNote)[] = isSearchMode
+    ? searchResults
+    : data?.notes || [];
 
   if (isLoading && !isSearchMode) {
     return <NoteListSkeleton />;
@@ -43,7 +47,7 @@ export default function NoteList({
     return (
       <div className='flex flex-col items-center justify-center h-full p-8 text-center'>
         <div className='w-16 h-16 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4'>
-          <FileText size={32} className='text-neutral-400' />
+          <NotebookText size={32} className='text-neutral-400' />
         </div>
         <p className='text-neutral-600 dark:text-neutral-400 mb-2 font-medium'>
           No notes yet
@@ -63,7 +67,7 @@ export default function NoteList({
           {isSearchMode ? (
             <Search size={20} className='text-blue-500' />
           ) : (
-            <FileText
+            <NotebookText
               size={20}
               className='text-neutral-900 dark:text-neutral-100'
             />

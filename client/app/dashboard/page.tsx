@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { RetrievedNote } from '@/types/query'; // Import RetrievedNote
 import NotesTopBar from '@/components/topbar/NotesTopBar';
 import NoteList from '@/components/notes/NoteList';
 import NoteViewer from '@/components/notes/NoteViewer';
@@ -14,8 +15,8 @@ export default function AllNotesPage() {
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [mobileViewerOpen, setMobileViewerOpen] = useState(false);
 
-  // Search state
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  // Search state - updated type
+  const [searchResults, setSearchResults] = useState<RetrievedNote[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchMode, setIsSearchMode] = useState(false);
 
@@ -32,8 +33,8 @@ export default function AllNotesPage() {
     setMobileViewerOpen(true);
   };
 
-  // Handle search results from NoteQuery
-  const handleSearchResults = (results: any[], query: string) => {
+  // Handle search results from NoteQuery - updated type
+  const handleSearchResults = (results: RetrievedNote[], query: string) => {
     setSearchResults(results);
     setSearchQuery(query);
     setIsSearchMode(results.length > 0 || query.length > 0);
@@ -86,8 +87,11 @@ export default function AllNotesPage() {
   return (
     <div className='grid h-screen w-full grid-rows-[auto_1fr] bg-neutral-50 dark:bg-neutral-950'>
       {/* Top Bar */}
-      <div className='px-4 md:px-6 pt-4 md:pt-6 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
-        <NotesTopBar onCreateClick={() => setCreateModalOpen(true)} />
+      <div className='p-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
+        <NotesTopBar
+          onCreateClick={() => setCreateModalOpen(true)}
+          isModalOpen={createModalOpen || editModalOpen}
+        />
       </div>
 
       {/* Main Grid - Desktop */}
