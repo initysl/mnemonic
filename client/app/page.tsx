@@ -1,5 +1,8 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { createSession, getSession } from '@/lib/session';
+import { v4 as uuidv4 } from 'uuid';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -47,6 +50,20 @@ function QuerySuggestions() {
 }
 
 export default function LandingPage() {
+  const router = useRouter();
+
+  const handleContinue = () => {
+    let sessionId = getSession();
+    if (!sessionId) {
+      sessionId = uuidv4();
+      createSession(sessionId);
+      console.log('New session created:', sessionId);
+    } else {
+      console.log('Using existing session:', sessionId);
+    }
+
+    router.push('/notes');
+  };
   return (
     <main className='min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 px-3'>
       <section className='patua max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-16 '>
@@ -87,7 +104,10 @@ export default function LandingPage() {
           </p>
 
           <div className='flex items-center gap-4'>
-            <button className='cursor-pointer rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'>
+            <button
+              onClick={handleContinue}
+              className='cursor-pointer rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'
+            >
               Continue
             </button>
             <span className='text-sm bg-green-500 p-1 text-white'>

@@ -176,7 +176,7 @@ export default function NoteQuery({
             className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors shrink-0 ${
               isRecording
                 ? 'bg-red-500 text-white hover:bg-red-600 animate-pulse'
-                : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 disabled:opacity-50'
+                : 'bg-white shadow-xl dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 disabled:opacity-50'
             }`}
             aria-label={isRecording ? 'Stop recording' : 'Start recording'}
           >
@@ -190,7 +190,7 @@ export default function NoteQuery({
           <button
             onClick={handleTextSearch}
             disabled={!query.trim() || isSearching || isRecording}
-            className='flex h-9 w-9 items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0'
+            className='flex h-9 w-9 items-center justify-center rounded-full shadow-xl bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0'
             aria-label='Search'
           >
             <Send className='h-4 w-4' />
@@ -201,7 +201,7 @@ export default function NoteQuery({
         <div className='mt-3 text-xs text-neutral-500 dark:text-neutral-400'>
           {isRecording ? (
             <span className='text-red-500 font-medium'>
-              🎤 Recording… Click to stop
+              Recording… Click to stop
             </span>
           ) : isSearching ? (
             <span className='text-blue-500 font-medium'>

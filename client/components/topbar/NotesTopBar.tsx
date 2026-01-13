@@ -65,7 +65,7 @@ export default function NotesTopBar({
             );
 
             const baseClasses =
-              'relative flex items-center gap-2 transition-all duration-300 rounded-xl';
+              'relative flex items-center gap-2 transition-all duration-100 rounded-xl';
             const activeClasses = showActive
               ? 'bg-blue-600 text-white px-4 py-2 shadow-md scale-105'
               : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 p-2';
