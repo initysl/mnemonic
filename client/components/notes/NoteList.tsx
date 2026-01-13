@@ -10,7 +10,7 @@ import { SlidersHorizontal, NotebookText, Search } from 'lucide-react';
 interface NoteListProps {
   onSelectNote: (id: string) => void;
   selectedId: string | null;
-  searchResults?: RetrievedNote[]; // Updated type
+  searchResults?: RetrievedNote[];
   searchQuery?: string;
 }
 

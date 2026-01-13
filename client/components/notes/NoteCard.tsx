@@ -69,7 +69,7 @@ export default function NoteCard({
 
         {/* Content */}
         <div className='flex-1 min-w-0'>
-          <h3 className='font-semibold text-base text-neutral-900 dark:text-neutral-100 line-clamp-1 mb-1'>
+          <h3 className='font-medium text-base text-neutral-900 dark:text-neutral-100 line-clamp-1 mb-1'>
             {note.title}
           </h3>
           <p className='text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 mb-3'>
@@ -78,10 +78,10 @@ export default function NoteCard({
 
           {/* Meta */}
           <div className='flex items-center gap-3 text-xs text-neutral-500 dark:text-neutral-500 flex-wrap'>
-            <span className='flex items-center gap-1'>
+            {/* <span className='flex items-center gap-1'>
               <Clock size={12} />
               {readingTime} min{readingTime > 1 ? 's' : ''}
-            </span>
+            </span> */}
             <span className='flex items-center gap-1'>
               <Calendar size={12} />
               {format(new Date(note.created_at), 'dd-MM-yyyy')}

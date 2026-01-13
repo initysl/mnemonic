@@ -111,10 +111,9 @@ export default function NoteQuery({
 
       if (notes.length > 0) {
         onVoiceResultSelect?.(notes[0].id);
-        toast.success(
-          `Voice query: "${result.query}" - Found ${notes.length} notes`,
-          { duration: 5000 }
-        );
+        toast.success(`Voice query: Found ${notes.length} notes`, {
+          duration: 5000,
+        });
       } else {
         toast.info(`No results for: "${result.query}"`);
       }
@@ -136,16 +135,16 @@ export default function NoteQuery({
   const hasActiveSearch = query.trim() || textQuery.data || voiceQuery.data;
 
   return (
-    <div className='space-y-4'>
+    <div className=''>
       {/* AI Answer - NEW */}
       {showAnswer && currentResult && !isSearching && (
-        <div className='px-5 pb-5'>
+        <div className='px-5'>
           <QueryAnswer result={currentResult} onNoteClick={onAnswerNoteClick} />
         </div>
       )}
       {/* Search Input */}
       <div className='p-5'>
-        <div className='flex items-center gap-3 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700'>
+        <div className='flex items-center gap-3 p-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700'>
           {isSearching ? (
             <Loader2 className='h-5 w-5 text-blue-500 animate-spin shrink-0' />
           ) : (

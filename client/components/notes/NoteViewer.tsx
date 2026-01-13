@@ -5,9 +5,6 @@ import NoteViewerSkeleton from '@/components/skeletons/NoteViewerSkeleton';
 import {
   Edit,
   Trash2,
-  Bold,
-  Italic,
-  Underline,
   NotebookText,
   AlertTriangle,
   Loader2,
@@ -75,7 +72,7 @@ export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
           <div className='flex items-start justify-between mb-4'>
             <div className='flex-1'>
               <div className='mb-2'>
-                <h1 className='text-2xl font-semibold text-neutral-900 dark:text-neutral-100'>
+                <h1 className='text-base font-medium text-neutral-900 dark:text-neutral-100'>
                   {note.title}
                 </h1>
               </div>
