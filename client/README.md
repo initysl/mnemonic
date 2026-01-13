@@ -20,6 +20,20 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Auth0 setup
+
+This app uses Auth0 for authentication. Configure the following environment variables before starting the dev server:
+
+```bash
+AUTH0_SECRET=your-long-random-value
+AUTH0_BASE_URL=http://localhost:3000
+AUTH0_ISSUER_BASE_URL=https://YOUR_DOMAIN
+AUTH0_CLIENT_ID=YOUR_CLIENT_ID
+AUTH0_CLIENT_SECRET=YOUR_CLIENT_SECRET
+```
+
+After logging in, Auth0 will redirect to `/dashboard` routes, which are protected by middleware.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
