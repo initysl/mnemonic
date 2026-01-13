@@ -2,12 +2,17 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.auth import verify_auth0_token
 from app.services.embedding_service import embedding_service
 from app.services.vector_service import vector_service
 from app.schemas.search import SearchRequest, SearchResultItem, SearchResponse
 
 
-router = APIRouter(prefix="/search", tags=["search"])
+router = APIRouter(
+    prefix="/search",
+    tags=["search"],
+    dependencies=[Depends(verify_auth0_token)],
+)
 
 
 @router.post("/", response_model=SearchResponse)

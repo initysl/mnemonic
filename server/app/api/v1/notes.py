@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from uuid import UUID
 from app.core.database import get_db
+from app.core.auth import verify_auth0_token
 from app.schemas.note import (
     NoteCreate, 
     NoteUpdate, 
@@ -12,7 +13,11 @@ from app.schemas.note import (
 )
 from app.services.note_service import NoteService
 
-router = APIRouter(prefix="/notes", tags=["notes"])
+router = APIRouter(
+    prefix="/notes",
+    tags=["notes"],
+    dependencies=[Depends(verify_auth0_token)],
+)
 
 
 @router.post("/", response_model=NoteResponse, status_code=status.HTTP_201_CREATED)
