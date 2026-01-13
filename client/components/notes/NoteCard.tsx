@@ -78,10 +78,10 @@ export default function NoteCard({
 
           {/* Meta */}
           <div className='flex items-center gap-3 text-xs text-neutral-500 dark:text-neutral-500 flex-wrap'>
-            {/* <span className='flex items-center gap-1'>
+            <span className='flex items-center gap-1'>
               <Clock size={12} />
               {readingTime} min{readingTime > 1 ? 's' : ''}
-            </span> */}
+            </span>
             <span className='flex items-center gap-1'>
               <Calendar size={12} />
               {format(new Date(note.created_at), 'dd-MM-yyyy')}

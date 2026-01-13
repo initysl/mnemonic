@@ -72,7 +72,7 @@ export default function NoteList({
               className='text-neutral-900 dark:text-neutral-100'
             />
           )}
-          <h2 className='text-xl font-semibold text-neutral-900 dark:text-neutral-100'>
+          <h2 className='text-base font-medium text-neutral-900 dark:text-neutral-100'>
             {isSearchMode ? 'Search Results' : 'All Notes'}
           </h2>
         </div>
@@ -82,11 +82,11 @@ export default function NoteList({
               <p className='text-sm text-blue-500 font-medium'>
                 {displayNotes.length} results
               </p>
-              {searchQuery && (
+              {/* {searchQuery && (
                 <span className='text-xs text-neutral-500 dark:text-neutral-400'>
                   for "{searchQuery}"
                 </span>
-              )}
+              )} */}
             </div>
           ) : (
             <p className='text-sm text-blue-500 font-medium'>
