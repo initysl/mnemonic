@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { FaGithubSquare } from 'react-icons/fa';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -47,8 +48,39 @@ function QuerySuggestions() {
 }
 
 export default function LandingPage() {
+  const { user, isLoading } = useUser();
+
   return (
     <main className='min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 px-3'>
+      <header className='max-w-7xl mx-auto flex items-center justify-between py-6'>
+        <div className='patua text-lg tracking-tight'>Mnemonic</div>
+        <div className='flex items-center gap-3 text-sm'>
+          {isLoading ? (
+            <span className='text-neutral-500 dark:text-neutral-400'>
+              Loading...
+            </span>
+          ) : user ? (
+            <>
+              <span className='text-neutral-500 dark:text-neutral-400'>
+                Hi, {user.given_name ?? user.name ?? 'there'}
+              </span>
+              <Link
+                className='rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:border-neutral-500 dark:hover:border-neutral-500 transition'
+                href='/api/auth/logout'
+              >
+                Log out
+              </Link>
+            </>
+          ) : (
+            <Link
+              className='rounded-full bg-neutral-900 dark:bg-white px-4 py-2 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'
+              href='/api/auth/login'
+            >
+              Log in
+            </Link>
+          )}
+        </div>
+      </header>
       <section className='patua max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-16 '>
         <motion.div
           initial='hidden'
@@ -87,9 +119,12 @@ export default function LandingPage() {
           </p>
 
           <div className='flex items-center gap-4'>
-            <button className='cursor-pointer rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'>
+            <Link
+              className='cursor-pointer rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'
+              href={user ? '/dashboard' : '/api/auth/login'}
+            >
               Continue
-            </button>
+            </Link>
             <span className='text-sm bg-green-500 p-1 text-white'>
               No setup. No friction.
             </span>
