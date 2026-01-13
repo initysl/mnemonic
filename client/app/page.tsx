@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { FaGithubSquare } from 'react-icons/fa';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -51,8 +52,14 @@ function QuerySuggestions() {
 
 export default function LandingPage() {
   const router = useRouter();
+  const { user, isLoading } = useUser();
 
   const handleContinue = () => {
+    if (!user) {
+      router.push('/api/auth/login');
+      return;
+    }
+
     let sessionId = getSession();
     if (!sessionId) {
       sessionId = uuidv4();
@@ -108,11 +115,30 @@ export default function LandingPage() {
               onClick={handleContinue}
               className='cursor-pointer rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'
             >
-              Continue
+              {user ? 'Continue' : 'Sign in to continue'}
             </button>
-            <span className='text-sm bg-green-500 p-1 text-white'>
-              No setup. No friction.
-            </span>
+            {!isLoading && (
+              <>
+                {user ? (
+                  <Link
+                    href='/api/auth/logout'
+                    className='text-sm rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition'
+                  >
+                    Sign out
+                  </Link>
+                ) : (
+                  <Link
+                    href='/api/auth/login'
+                    className='text-sm rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition'
+                  >
+                    Sign in
+                  </Link>
+                )}
+                <span className='text-sm bg-green-500 p-1 text-white'>
+                  No setup. No friction.
+                </span>
+              </>
+            )}
           </div>
         </motion.div>
 

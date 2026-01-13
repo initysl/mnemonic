@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 import time
 from app.core.database import get_db
+from app.core.auth import verify_auth0_token
 from app.services.voice_service import voice_service
 from app.services.embedding_service import embedding_service
 from app.services.vector_service import vector_service
@@ -10,7 +11,11 @@ from app.services.llm_service import llm_service
 from app.schemas.query import QueryRequest, QueryResponse, RetrievedNote
 
 
-router = APIRouter(prefix="/query", tags=["query"])
+router = APIRouter(
+    prefix="/query",
+    tags=["query"],
+    dependencies=[Depends(verify_auth0_token)],
+)
 
 
 @router.post("/text", response_model=QueryResponse)
