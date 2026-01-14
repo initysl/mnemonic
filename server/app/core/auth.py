@@ -1,9 +1,8 @@
 import os
 import time
 from typing import Any, Dict
-
 import requests
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 
@@ -92,3 +91,9 @@ def verify_auth0_token(
         ) from exc
 
     return payload
+
+def get_user_id(token_payload: dict = Security(verify_auth0_token)) -> str:
+    """
+    Extract user ID from verified token
+    """
+    return token_payload["sub"]  # Auth0 user ID (e.g., "auth0|123456")

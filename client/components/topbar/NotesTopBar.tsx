@@ -105,12 +105,12 @@ export default function NotesTopBar({
         {user && (
           <div className='flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-300'>
             <span className='hidden sm:inline'>Signed in as {user.name}</span>
-            <Link
-              href='/api/auth/logout'
+            <a
+              href='/auth/logout'
               className='rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition'
             >
               Sign out
-            </Link>
+            </a>
           </div>
         )}
       </div>

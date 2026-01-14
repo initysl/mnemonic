@@ -9,7 +9,12 @@ function decodeTokenExpiry(token: string): number | null {
   if (!payload) return null;
 
   try {
-    const decoded = JSON.parse(atob(payload));
+    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(
+      Math.ceil(normalized.length / 4) * 4,
+      '='
+    );
+    const decoded = JSON.parse(atob(padded));
     if (typeof decoded.exp === 'number') {
       return decoded.exp * 1000;
     }
@@ -29,7 +34,7 @@ export async function getAuthToken(): Promise<string | null> {
     return inflightRequest;
   }
 
-  inflightRequest = fetch('/api/auth/token')
+  inflightRequest = fetch('/auth/access-token')
     .then(async (response) => {
       if (!response.ok) {
         cachedToken = null;
@@ -37,15 +42,15 @@ export async function getAuthToken(): Promise<string | null> {
         return null;
       }
 
-      const data = (await response.json()) as { accessToken?: string };
-      if (!data.accessToken) {
+      const data = (await response.json()) as { token?: string };
+      if (!data.token) {
         cachedToken = null;
         tokenExpiry = 0;
         return null;
       }
 
-      cachedToken = data.accessToken;
-      tokenExpiry = decodeTokenExpiry(data.accessToken) ?? Date.now();
+      cachedToken = data.token;
+      tokenExpiry = decodeTokenExpiry(data.token) ?? Date.now();
       return cachedToken;
     })
     .finally(() => {
