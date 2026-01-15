@@ -68,5 +68,4 @@ def get_user_id(token_payload: dict = Security(verify_token)) -> str:
     user_id = token_payload.get("sub")
     if not user_id:
         raise HTTPException(401, "User ID not found in token")
-    print(f"Authenticated user: {user_id}")  # Debug logging
     return user_id

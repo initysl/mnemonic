@@ -63,7 +63,7 @@ export default function NoteForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder='Enter note title...'
-          className='w-full px-4 py-3 rounded-xl text-neutral-900 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg'
+          className='w-full p-3 rounded-xl text-neutral-900 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg'
           required
           disabled={isLoading}
         />
@@ -83,7 +83,7 @@ export default function NoteForm({
           onChange={(e) => setContent(e.target.value)}
           placeholder='Write your note...'
           rows={8}
-          className='w-full px-4 py-3 rounded-xl text-neutral-900 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none'
+          className='w-full p-3 rounded-xl text-neutral-900 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none'
           required
           disabled={isLoading}
         />

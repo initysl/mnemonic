@@ -4,21 +4,23 @@ import { Settings, Plus, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import Image from 'next/image';
 
 interface NotesTopBarProps {
   onCreateClick: () => void;
+  onSettingsClick?: () => void;
   isModalOpen?: boolean;
 }
 
 export default function NotesTopBar({
   onCreateClick,
+  onSettingsClick,
   isModalOpen = false,
 }: NotesTopBarProps) {
   const { user } = useUser();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<string>('All');
 
-  // Reset to 'All' when modal closes
   useEffect(() => {
     if (!isModalOpen && activeView === 'Create') {
       setActiveView('All');
@@ -42,7 +44,8 @@ export default function NotesTopBar({
     {
       name: 'Settings',
       icon: Settings,
-      href: '/dashboard/settings',
+      href: onSettingsClick ? undefined : '/dashboard/settings',
+      onClick: onSettingsClick,
     },
   ];
 
@@ -101,16 +104,25 @@ export default function NotesTopBar({
           })}
         </ul>
       </div>
-      <div className='flex-1 flex justify-end'>
+      <div className='flex-1 flex justify-around'>
         {user && (
           <div className='flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-300'>
-            <span className='hidden sm:inline'>Signed in as {user.name}</span>
-            <a
-              href='/auth/logout'
-              className='rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition'
-            >
-              Sign out
-            </a>
+            <Image
+              src={user.picture ?? `ui-avatars.com{user.name}`}
+              alt='user profile picture'
+              width={30}
+              height={30}
+              className='rounded-full shadow-sm'
+            />
+            <div className='hidden sm:inline'>
+              <span className=''>{user.name}</span>
+              {/* <Link
+                href='/auth/logout'
+                className='rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition'
+              >
+                Sign out
+              </Link> */}
+            </div>
           </div>
         )}
       </div>

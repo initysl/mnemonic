@@ -7,6 +7,7 @@ import NoteList from '@/components/notes/NoteList';
 import NoteViewer from '@/components/notes/NoteViewer';
 import NoteQuery from '@/components/notes/NoteQuery';
 import NoteModal from '@/components/notes/NoteModal';
+import SettingsModal from '@/components/notes/SettingsModal';
 import { ArrowLeft } from 'lucide-react';
 import { useCreateNote, useUpdateNote } from '@/hooks/useNotes';
 import { toast } from 'sonner';
@@ -24,6 +25,7 @@ export default function AllNotesPage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [noteToEdit, setNoteToEdit] = useState<any>(null);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
   const createNote = useCreateNote();
   const updateNote = useUpdateNote();
@@ -90,7 +92,8 @@ export default function AllNotesPage() {
       <div className='p-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
         <NotesTopBar
           onCreateClick={() => setCreateModalOpen(true)}
-          isModalOpen={createModalOpen || editModalOpen}
+          onSettingsClick={() => setSettingsModalOpen(true)}
+          isModalOpen={createModalOpen || editModalOpen || settingsModalOpen}
         />
       </div>
 
@@ -190,6 +193,11 @@ export default function AllNotesPage() {
         title='Edit Note'
         submitLabel='Save Changes'
         isLoading={updateNote.isPending}
+      />
+
+      <SettingsModal
+        isOpen={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
       />
     </div>
   );
