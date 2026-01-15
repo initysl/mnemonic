@@ -100,6 +100,17 @@ class NoteService:
         db.delete(note)
         db.commit()
         return True
+
+    @staticmethod
+    def delete_all_notes(db: Session, user_id: str) -> int:
+        """Delete all notes for user and return count"""
+        deleted_count = (
+            db.query(Note)
+            .filter(Note.user_id == user_id)
+            .delete(synchronize_session=False)
+        )
+        db.commit()
+        return deleted_count
     
     @staticmethod
     def get_all_tags(db: Session, user_id: str) -> List[str]:

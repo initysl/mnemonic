@@ -9,7 +9,8 @@ from app.schemas.note import (
     NoteUpdate, 
     NoteResponse, 
     NoteListResponse,
-    NoteDeleteResponse
+    NoteDeleteResponse,
+    NoteDeleteAllResponse
 )
 from app.services.note_service import NoteService
 
@@ -18,6 +19,9 @@ router = APIRouter(
     tags=["notes"],
 )
 
+
+
+@router.post("", response_model=NoteResponse, status_code=status.HTTP_201_CREATED)
 @router.post("/", response_model=NoteResponse, status_code=status.HTTP_201_CREATED)
 def create_note(
     note: NoteCreate,
@@ -28,6 +32,7 @@ def create_note(
     created_note = NoteService.create_note(db, note, user_id)
     return created_note
 
+@router.get("", response_model=NoteListResponse)
 @router.get("/", response_model=NoteListResponse)
 def list_notes(
     page: int = Query(1, ge=1, description="Page number"),
@@ -37,35 +42,36 @@ def list_notes(
     db: Session = Depends(get_db)
 ):
     """Get paginated list of notes for authenticated user"""
-    try:
-        skip = (page - 1) * page_size
-        notes, total = NoteService.get_notes(
-            db, 
-            user_id=user_id,  
-            skip=skip, 
-            limit=page_size, 
-            tag=tag
-        )
-        
-        return NoteListResponse(
-            notes=notes,  # type: ignore
-            total=total,
-            page=page,
-            page_size=page_size
-        )
-    except Exception as e:
-        print(f"Error in list_notes: {e}")  # Debug logging
-        import traceback
-        traceback.print_exc()  # Full stack trace
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch notes: {str(e)}"
-        )
+    skip = (page - 1) * page_size
+    notes, total = NoteService.get_notes(
+        db, 
+        user_id=user_id,  
+        skip=skip, 
+        limit=page_size, 
+        tag=tag
+    )
+    
+    return NoteListResponse(
+        notes=notes,  # type: ignore
+        total=total,
+        page=page,
+        page_size=page_size
+    )
+
+
+@router.get("/stats", response_model=dict)
+def get_note_stats(
+    user_id: str = Depends(get_user_id),
+    db: Session = Depends(get_db)
+):
+    """Get note statistics for authenticated user"""
+    stats = NoteService.get_note_statistics(db, user_id)
+    return stats
 
 @router.get("/{note_id}", response_model=NoteResponse)
 def get_note(
     note_id: UUID,
-    user_id: str = Depends(get_user_id),  # Get user_id from Auth0 token
+    user_id: str = Depends(get_user_id),
     db: Session = Depends(get_db)
 ):
     """Get a single note by ID (must belong to user)"""
@@ -83,7 +89,7 @@ def get_note(
 def update_note(
     note_id: UUID,
     note_update: NoteUpdate,
-    user_id: str = Depends(get_user_id),  # Get user_id from Auth0 token
+    user_id: str = Depends(get_user_id),
     db: Session = Depends(get_db)
 ):
     """Update an existing note (must belong to user)"""
@@ -97,10 +103,11 @@ def update_note(
     
     return updated_note
 
+
 @router.delete("/{note_id}", response_model=NoteDeleteResponse)
 def delete_note(
     note_id: UUID,
-    user_id: str = Depends(get_user_id),  # Get user_id from Auth0 token
+    user_id: str = Depends(get_user_id),
     db: Session = Depends(get_db)
 ):
     """Delete a note (must belong to user)"""
@@ -117,11 +124,16 @@ def delete_note(
         deleted_id=note_id
     )
 
-@router.get("/stats/summary", response_model=dict)
-def get_note_stats(
-    user_id: str = Depends(get_user_id),  # Get user_id from Auth0 token
+
+@router.delete("", response_model=NoteDeleteAllResponse)
+@router.delete("/", response_model=NoteDeleteAllResponse)
+def delete_all_notes(
+    user_id: str = Depends(get_user_id),
     db: Session = Depends(get_db)
 ):
-    """Get note statistics for authenticated user"""
-    stats = NoteService.get_note_statistics(db, user_id)
-    return stats
+    """Delete all notes for authenticated user"""
+    deleted_count = NoteService.delete_all_notes(db, user_id)
+    return NoteDeleteAllResponse(
+        message="All notes deleted successfully",
+        deleted_count=deleted_count
+    )

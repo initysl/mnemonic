@@ -57,6 +57,18 @@ export const useDeleteNote = () => {
   });
 };
 
+export const useDeleteAllNotes = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => noteAPI.deleteAllNotes(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      queryClient.invalidateQueries({ queryKey: ['note-stats'] });
+    },
+  });
+};
+
 export const useNoteStats = () => {
   return useQuery({
     queryKey: ['note-stats'],

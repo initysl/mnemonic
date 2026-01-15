@@ -31,6 +31,11 @@ export interface NoteDeleteResponse {
   deleted_id: string;
 }
 
+export interface NoteDeleteAllResponse {
+  message: string;
+  deleted_count: number;
+}
+
 export interface NoteStatsResponse {
   total_notes: number;
   tags_count: Record<string, number>;

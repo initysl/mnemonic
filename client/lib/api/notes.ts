@@ -6,10 +6,10 @@ import {
   NoteListResponse,
   NoteStatsResponse,
   NoteDeleteResponse,
+  NoteDeleteAllResponse,
 } from '@/types/note';
 
 export const noteAPI = {
-  
   async createNote(payload: NoteCreate): Promise<Note> {
     try {
       const { data } = await apiClient.post<Note>('/notes', payload);
@@ -20,7 +20,6 @@ export const noteAPI = {
     }
   },
 
-  
   async getNote(id: string): Promise<Note> {
     try {
       const { data } = await apiClient.get<Note>(`/notes/${id}`);
@@ -31,7 +30,6 @@ export const noteAPI = {
     }
   },
 
-  
   async listNotes(params?: {
     page?: number;
     page_size?: number;
@@ -54,7 +52,6 @@ export const noteAPI = {
     }
   },
 
-  
   async updateNote(id: string, payload: NoteUpdate): Promise<Note> {
     try {
       const { data } = await apiClient.put<Note>(`/notes/${id}`, payload);
@@ -65,7 +62,6 @@ export const noteAPI = {
     }
   },
 
-  
   async deleteNote(id: string): Promise<NoteDeleteResponse> {
     try {
       const { data } = await apiClient.delete<NoteDeleteResponse>(
@@ -78,7 +74,16 @@ export const noteAPI = {
     }
   },
 
-  
+  async deleteAllNotes(): Promise<NoteDeleteAllResponse> {
+    try {
+      const { data } = await apiClient.delete<NoteDeleteAllResponse>('/notes');
+      return data;
+    } catch (error) {
+      console.error('Failed to delete all notes:', error);
+      throw error;
+    }
+  },
+
   async getNoteStats(): Promise<NoteStatsResponse> {
     try {
       const { data } = await apiClient.get<NoteStatsResponse>('/notes/stats');

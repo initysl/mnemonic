@@ -2,6 +2,7 @@
 
 import { useNote, useDeleteNote } from '@/hooks/useNotes';
 import NoteViewerSkeleton from '@/components/skeletons/NoteViewerSkeleton';
+import QueryAnswer from '@/components/query/QueryAnswer';
 import {
   Edit,
   Trash2,
@@ -12,16 +13,25 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { QueryResponse } from '@/types/query';
 
 interface NoteViewerProps {
   noteId: string | null;
   onEditClick?: (note: any) => void;
+  queryResult?: QueryResponse | null;
+  onAnswerNoteClick?: (noteId: string) => void;
 }
 
-export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
+export default function NoteViewer({
+  noteId,
+  onEditClick,
+  queryResult,
+  onAnswerNoteClick,
+}: NoteViewerProps) {
   const { data: note, isLoading } = useNote(noteId || '');
   const deleteNote = useDeleteNote();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const hasQueryAnswer = Boolean(queryResult);
 
   const handleDelete = async () => {
     if (!noteId) return;
@@ -36,7 +46,7 @@ export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
     }
   };
 
-  if (!noteId) {
+  if (!noteId && !hasQueryAnswer) {
     return (
       <div className='flex flex-col items-center justify-center h-full p-8 text-center'>
         <div className='w-16 h-16 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4'>
@@ -56,7 +66,7 @@ export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
     return <NoteViewerSkeleton />;
   }
 
-  if (!note) {
+  if (noteId && !note) {
     return (
       <div className='flex items-center justify-center h-full p-8 text-center'>
         <p className='text-neutral-500'>Note not found</p>
@@ -66,48 +76,69 @@ export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
 
   return (
     <>
-      <article className='h-full flex flex-col'>
-        {/* Header */}
-        <div className='p-4 md:p-6 border-b border-neutral-200 dark:border-neutral-800'>
-          <div className='flex items-start justify-between mb-4'>
-            <div className='flex-1'>
-              <div className='mb-2'>
-                <h1 className='text-base font-medium text-neutral-900 dark:text-neutral-100'>
-                  {note.title}
-                </h1>
-              </div>
-              <div className='flex items-center gap-2 text-sm'>
-                <span className='px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'>
-                  {formatDistanceToNow(new Date(note.updated_at))} ago
-                </span>
-              </div>
-            </div>
-            <div className='flex gap-2'>
-              <button
-                onClick={() => onEditClick?.(note)}
-                className='flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors text-sm font-medium'
-              >
-                <Edit size={16} />
-                <span className='hidden sm:inline'>Edit</span>
-              </button>
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className='p-2 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors'
-              >
-                <Trash2 size={18} />
-              </button>
-            </div>
-          </div>
+      {queryResult && (
+        <div className='border-b border-neutral-200 dark:border-neutral-800 p-4 '>
+          <QueryAnswer result={queryResult} onNoteClick={onAnswerNoteClick} />
         </div>
+      )}
+      <article className='h-full flex flex-col'>
+        {note ? (
+          <>
+            {/* Header */}
+            <div className='p-4 md:p-6 border-b border-neutral-200 dark:border-neutral-800'>
+              <div className='flex items-start justify-between mb-4'>
+                <div className='flex-1'>
+                  <div className='mb-2'>
+                    <h1 className='text-base font-medium text-neutral-900 dark:text-neutral-100'>
+                      {note.title}
+                    </h1>
+                  </div>
+                  <div className='flex items-center gap-2 text-sm'>
+                    <span className='px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'>
+                      {formatDistanceToNow(new Date(note.updated_at))} ago
+                    </span>
+                  </div>
+                </div>
+                <div className='flex gap-2'>
+                  <button
+                    onClick={() => onEditClick?.(note)}
+                    className='flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors text-sm font-medium'
+                  >
+                    <Edit size={16} />
+                    <span className='hidden sm:inline'>Edit</span>
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className='p-2 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors'
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            </div>
 
-        {/* Content */}
-        <div className='flex-1 overflow-y-auto p-4 md:p-6'>
-          <div className='prose dark:prose-invert max-w-none'>
-            <p className='whitespace-pre-wrap leading-relaxed text-neutral-700 dark:text-neutral-300'>
-              {note.content}
+            {/* Content */}
+            <div className='flex-1 overflow-y-auto p-4 md:p-6'>
+              <div className='prose dark:prose-invert max-w-none'>
+                <p className='whitespace-pre-wrap leading-relaxed text-neutral-700 dark:text-neutral-300'>
+                  {note.content}
+                </p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className='flex flex-col items-center justify-center h-full p-8 text-center'>
+            <div className='w-16 h-16 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4'>
+              <NotebookText size={32} className='text-neutral-400' />
+            </div>
+            <p className='text-neutral-600 dark:text-neutral-400 font-medium mb-2'>
+              Select a note to view
+            </p>
+            <p className='text-sm text-neutral-500'>
+              Click on any note from the list
             </p>
           </div>
-        </div>
+        )}
       </article>
 
       {/* Delete Confirmation Modal */}
@@ -132,7 +163,7 @@ export default function NoteViewer({ noteId, onEditClick }: NoteViewerProps) {
             </div>
 
             <p className='text-neutral-700 dark:text-neutral-300 mb-6'>
-              Are you sure you want to delete "{note.title}"? This will
+              Are you sure you want to delete "{note?.title}"? This will
               permanently remove the note from your collection.
             </p>
 

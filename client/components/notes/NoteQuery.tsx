@@ -4,22 +4,21 @@ import { Mic, Search, Loader2, Send, X } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useTextQuery, useVoiceQuery } from '@/hooks/useKuery';
 import { toast } from 'sonner';
-import QueryAnswer from '@/components/query/QueryAnswer';
+import { QueryResponse } from '@/types/query';
 
 interface NoteQueryProps {
   onSearchResults?: (results: any[], query: string) => void;
   onVoiceResultSelect?: (noteId: string) => void;
-  onAnswerNoteClick?: (noteId: string) => void;
+  onQueryResult?: (result: QueryResponse | null) => void;
 }
 
 export default function NoteQuery({
   onSearchResults,
   onVoiceResultSelect,
-  onAnswerNoteClick,
+  onQueryResult,
 }: NoteQueryProps) {
   const [query, setQuery] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [showAnswer, setShowAnswer] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -28,8 +27,6 @@ export default function NoteQuery({
   const voiceQuery = useVoiceQuery();
 
   const isSearching = textQuery.isPending || voiceQuery.isPending;
-  const currentResult = textQuery.data || voiceQuery.data;
-
   // Text Query
   const handleTextSearch = async () => {
     if (!query.trim()) return;
@@ -43,7 +40,7 @@ export default function NoteQuery({
 
       const notes = result.retrieved_notes;
       onSearchResults?.(notes, result.query);
-      setShowAnswer(true);
+      onQueryResult?.(result);
 
       if (notes.length > 0) {
         toast.success(`Found ${notes.length} matching notes`, {
@@ -107,7 +104,7 @@ export default function NoteQuery({
 
       const notes = result.retrieved_notes;
       onSearchResults?.(notes, result.query);
-      setShowAnswer(true); // Show answer panel
+      onQueryResult?.(result);
 
       if (notes.length > 0) {
         onVoiceResultSelect?.(notes[0].id);
@@ -127,7 +124,7 @@ export default function NoteQuery({
   const handleClear = () => {
     setQuery('');
     onSearchResults?.([], '');
-    setShowAnswer(false); // Hide answer
+    onQueryResult?.(null);
     textQuery.reset();
     voiceQuery.reset();
   };
@@ -136,12 +133,6 @@ export default function NoteQuery({
 
   return (
     <div className=''>
-      {/* AI Answer - NEW */}
-      {showAnswer && currentResult && !isSearching && (
-        <div className='px-5'>
-          <QueryAnswer result={currentResult} onNoteClick={onAnswerNoteClick} />
-        </div>
-      )}
       {/* Search Input */}
       <div className='p-5'>
         <div className='flex items-center gap-3 p-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700'>

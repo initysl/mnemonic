@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { RetrievedNote } from '@/types/query';
 import NotesTopBar from '@/components/topbar/NotesTopBar';
 import NoteList from '@/components/notes/NoteList';
@@ -11,12 +11,22 @@ import SettingsModal from '@/components/notes/SettingsModal';
 import { ArrowLeft } from 'lucide-react';
 import { useCreateNote, useUpdateNote } from '@/hooks/useNotes';
 import { toast } from 'sonner';
+import { QueryResponse } from '@/types/query';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export default function AllNotesPage() {
-  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
-  const [mobileViewerOpen, setMobileViewerOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const noteParam = searchParams.get('note');
 
-  // Search state - updated type
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(
+    noteParam
+  );
+  const [mobileViewerOpen, setMobileViewerOpen] = useState(Boolean(noteParam));
+  const [queryResult, setQueryResult] = useState<QueryResponse | null>(null);
+
+  // Search state
   const [searchResults, setSearchResults] = useState<RetrievedNote[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchMode, setIsSearchMode] = useState(false);
@@ -30,28 +40,82 @@ export default function AllNotesPage() {
   const createNote = useCreateNote();
   const updateNote = useUpdateNote();
 
-  const handleSelectNote = (id: string) => {
-    setSelectedNoteId(id);
-    setMobileViewerOpen(true);
-  };
-
-  // Handle search results from NoteQuery - updated type
-  const handleSearchResults = (results: RetrievedNote[], query: string) => {
-    setSearchResults(results);
-    setSearchQuery(query);
-    setIsSearchMode(results.length > 0 || query.length > 0);
-
-    // Clear selection when search changes
-    if (results.length === 0) {
-      setSelectedNoteId(null);
+  // Sync URL params to state (only when URL changes externally)
+  useEffect(() => {
+    if (noteParam !== selectedNoteId) {
+      setSelectedNoteId(noteParam);
+      setMobileViewerOpen(Boolean(noteParam));
     }
-  };
+  }, [noteParam]); // Remove selectedNoteId from deps to prevent loop
 
-  // Handle voice query result - auto-select first result
-  const handleVoiceResultSelect = (noteId: string) => {
-    setSelectedNoteId(noteId);
-    setMobileViewerOpen(true);
-  };
+  // Update URL when selection changes (debounced to prevent loops)
+  const updateURL = useCallback(
+    (noteId: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (noteId) {
+        params.set('note', noteId);
+      } else {
+        params.delete('note');
+      }
+
+      const newQuery = params.toString();
+      const newUrl = newQuery ? `${pathname}?${newQuery}` : pathname;
+
+      // Only update if URL actually changed
+      const currentUrl = window.location.pathname + window.location.search;
+      if (currentUrl !== newUrl) {
+        router.replace(newUrl, { scroll: false });
+      }
+    },
+    [pathname, router, searchParams]
+  );
+
+  // Handle note selection with URL update
+  const handleSelectNote = useCallback(
+    (id: string) => {
+      setSelectedNoteId(id);
+      setMobileViewerOpen(true);
+      updateURL(id);
+    },
+    [updateURL]
+  );
+
+  // Handle search results
+  const handleSearchResults = useCallback(
+    (results: RetrievedNote[], query: string) => {
+      setSearchResults(results);
+      setSearchQuery(query);
+      setIsSearchMode(results.length > 0 || query.length > 0);
+
+      // Clear selection when search changes
+      if (results.length === 0) {
+        setSelectedNoteId(null);
+        updateURL(null);
+      }
+    },
+    [updateURL]
+  );
+
+  // Handle voice query result
+  const handleVoiceResultSelect = useCallback(
+    (noteId: string) => {
+      setSelectedNoteId(noteId);
+      setMobileViewerOpen(true);
+      updateURL(noteId);
+    },
+    [updateURL]
+  );
+
+  // Handle answer note click
+  const handleAnswerNoteClick = useCallback(
+    (noteId: string) => {
+      setSelectedNoteId(noteId);
+      setMobileViewerOpen(true);
+      updateURL(noteId);
+    },
+    [updateURL]
+  );
 
   // Create Note Handler
   const handleCreateNote = async (data: any) => {
@@ -81,10 +145,17 @@ export default function AllNotesPage() {
   };
 
   // Open Edit Modal
-  const openEditModal = (note: any) => {
+  const openEditModal = useCallback((note: any) => {
     setNoteToEdit(note);
     setEditModalOpen(true);
-  };
+  }, []);
+
+  // Handle mobile back button
+  const handleMobileBack = useCallback(() => {
+    setMobileViewerOpen(false);
+    setSelectedNoteId(null);
+    updateURL(null);
+  }, [updateURL]);
 
   return (
     <div className='grid h-screen w-full grid-rows-[auto_1fr] bg-neutral-50 dark:bg-neutral-950'>
@@ -102,7 +173,7 @@ export default function AllNotesPage() {
         {/* Notes List */}
         <section className='overflow-y-auto rounded-2xl bg-white dark:bg-neutral-900 shadow-sm'>
           <NoteList
-            onSelectNote={setSelectedNoteId}
+            onSelectNote={handleSelectNote}
             selectedId={selectedNoteId}
             searchResults={isSearchMode ? searchResults : undefined}
             searchQuery={searchQuery}
@@ -113,7 +184,12 @@ export default function AllNotesPage() {
         <section className='grid grid-rows-[1fr_auto] gap-4 overflow-hidden'>
           {/* Viewer */}
           <div className='overflow-y-auto rounded-2xl bg-white dark:bg-neutral-900 shadow-sm'>
-            <NoteViewer noteId={selectedNoteId} onEditClick={openEditModal} />
+            <NoteViewer
+              noteId={selectedNoteId}
+              onEditClick={openEditModal}
+              queryResult={queryResult}
+              onAnswerNoteClick={handleAnswerNoteClick}
+            />
           </div>
 
           {/* Query */}
@@ -121,6 +197,7 @@ export default function AllNotesPage() {
             <NoteQuery
               onSearchResults={handleSearchResults}
               onVoiceResultSelect={handleVoiceResultSelect}
+              onQueryResult={setQueryResult}
             />
           </div>
         </section>
@@ -142,6 +219,7 @@ export default function AllNotesPage() {
               <NoteQuery
                 onSearchResults={handleSearchResults}
                 onVoiceResultSelect={handleVoiceResultSelect}
+                onQueryResult={setQueryResult}
               />
             </div>
           </>
@@ -149,8 +227,8 @@ export default function AllNotesPage() {
           <div className='flex-1 overflow-y-auto bg-white dark:bg-neutral-900'>
             <div className='sticky top-0 z-10 flex items-center gap-2 p-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
               <button
-                onClick={() => setMobileViewerOpen(false)}
-                className='p-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:hover:bg-neutral-800 transition-colors'
+                onClick={handleMobileBack}
+                className='p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors'
               >
                 <ArrowLeft size={20} />
               </button>
@@ -158,7 +236,12 @@ export default function AllNotesPage() {
                 Back to notes
               </span>
             </div>
-            <NoteViewer noteId={selectedNoteId} onEditClick={openEditModal} />
+            <NoteViewer
+              noteId={selectedNoteId}
+              onEditClick={openEditModal}
+              queryResult={queryResult}
+              onAnswerNoteClick={handleAnswerNoteClick}
+            />
           </div>
         )}
       </div>
@@ -169,7 +252,7 @@ export default function AllNotesPage() {
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNote}
         title='Create New Note'
-        submitLabel='Create Note'
+        submitLabel='Create'
         isLoading={createNote.isPending}
       />
 
@@ -191,7 +274,7 @@ export default function AllNotesPage() {
             : undefined
         }
         title='Edit Note'
-        submitLabel='Save Changes'
+        submitLabel='Save'
         isLoading={updateNote.isPending}
       />
 

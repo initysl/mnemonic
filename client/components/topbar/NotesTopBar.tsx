@@ -112,16 +112,11 @@ export default function NotesTopBar({
               alt='user profile picture'
               width={30}
               height={30}
-              className='rounded-full shadow-sm'
+              quality={100}
+              className='rounded-full shadow-sm '
             />
             <div className='hidden sm:inline'>
               <span className=''>{user.name}</span>
-              {/* <Link
-                href='/auth/logout'
-                className='rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition'
-              >
-                Sign out
-              </Link> */}
             </div>
           </div>
         )}
