@@ -1,99 +1,72 @@
 import os
-import time
-from typing import Any, Dict
+from jose import jwt, JWTError
+from fastapi import HTTPException, Security
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import requests
-from fastapi import Depends, HTTPException, Security, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
-
-ALGORITHMS = ["RS256"]
+from functools import lru_cache
 
 AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
-AUTH0_AUDIENCE = os.getenv("AUTH0_AUDIENCE")
-AUTH0_ISSUER = os.getenv("AUTH0_ISSUER") or (
-    f"https://{AUTH0_DOMAIN}/" if AUTH0_DOMAIN else None
-)
-
-_jwks_cache: Dict[str, Any] = {"keys": None, "expires_at": 0.0}
+API_AUDIENCE = os.getenv("AUTH0_API_AUDIENCE")
+ALGORITHMS = ["RS256"]
 
 security = HTTPBearer()
 
-
-def _get_jwks() -> Dict[str, Any]:
-    if not AUTH0_DOMAIN:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="AUTH0_DOMAIN is not configured",
-        )
-
-    if _jwks_cache["keys"] and _jwks_cache["expires_at"] > time.time():
-        return _jwks_cache["keys"]
-
+@lru_cache()
+def get_jwks():
+    """Fetch Auth0 public keys"""
     jwks_url = f"https://{AUTH0_DOMAIN}/.well-known/jwks.json"
-    response = requests.get(jwks_url, timeout=10)
-    response.raise_for_status()
-    jwks = response.json()
-    _jwks_cache["keys"] = jwks
-    _jwks_cache["expires_at"] = time.time() + 60 * 60
-    return jwks
+    try:
+        response = requests.get(jwks_url)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Failed to fetch JWKS: {e}")
+        raise
 
-
-def verify_auth0_token(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-) -> Dict[str, Any]:
-    if not AUTH0_AUDIENCE or not AUTH0_ISSUER:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Auth0 audience or issuer not configured",
-        )
-
+def verify_token(credentials: HTTPAuthorizationCredentials = Security(security)) -> dict:
+    """Verify Auth0 JWT token"""
     token = credentials.credentials
-
+    
     try:
         unverified_header = jwt.get_unverified_header(token)
-    except JWTError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token header",
-        ) from exc
-
-    jwks = _get_jwks()
-    rsa_key = {}
-    for key in jwks.get("keys", []):
-        if key.get("kid") == unverified_header.get("kid"):
-            rsa_key = {
-                "kty": key.get("kty"),
-                "kid": key.get("kid"),
-                "use": key.get("use"),
-                "n": key.get("n"),
-                "e": key.get("e"),
-            }
-            break
-
-    if not rsa_key:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Unable to find matching Auth0 key",
-        )
-
-    try:
+        jwks = get_jwks()
+        rsa_key = {}
+        
+        for key in jwks["keys"]:
+            if key["kid"] == unverified_header["kid"]:
+                rsa_key = {
+                    "kty": key["kty"],
+                    "kid": key["kid"],
+                    "use": key["use"],
+                    "n": key["n"],
+                    "e": key["e"]
+                }
+                break
+        
+        if not rsa_key:
+            raise HTTPException(401, "Unable to find appropriate key")
+        
         payload = jwt.decode(
             token,
             rsa_key,
             algorithms=ALGORITHMS,
-            audience=AUTH0_AUDIENCE,
-            issuer=AUTH0_ISSUER,
+            audience=API_AUDIENCE,
+            issuer=f"https://{AUTH0_DOMAIN}/"
         )
-    except JWTError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token validation failed",
-        ) from exc
+        
+        return payload
+        
+    except JWTError as e:
+        print(f"JWT Error: {e}")  # Debug logging
+        raise HTTPException(401, f"Invalid token: {str(e)}")
+    except Exception as e:
+        print(f"Auth Error: {e}")  # Debug logging
+        raise HTTPException(401, f"Authentication failed: {str(e)}")
 
-    return payload
-
-def get_user_id(token_payload: dict = Security(verify_auth0_token)) -> str:
-    """
-    Extract user ID from verified token
-    """
-    return token_payload["sub"]  # Auth0 user ID (e.g., "auth0|123456")
+def get_user_id(token_payload: dict = Security(verify_token)) -> str:
+    """Extract user ID from verified token"""
+    user_id = token_payload.get("sub")
+    if not user_id:
+        raise HTTPException(401, "User ID not found in token")
+    print(f"Authenticated user: {user_id}")  # Debug logging
+    return user_id

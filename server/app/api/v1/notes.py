@@ -21,7 +21,7 @@ router = APIRouter(
 @router.post("/", response_model=NoteResponse, status_code=status.HTTP_201_CREATED)
 def create_note(
     note: NoteCreate,
-    user_id: str = Depends(get_user_id),  # Get user_id from Auth0 token
+    user_id: str = Depends(get_user_id), 
     db: Session = Depends(get_db)
 ):
     """Create a new note for authenticated user"""
@@ -33,25 +33,34 @@ def list_notes(
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     tag: Optional[str] = Query(None, description="Filter by tag"),
-    user_id: str = Depends(get_user_id),  # Get user_id from Auth0 token
+    user_id: str = Depends(get_user_id),
     db: Session = Depends(get_db)
 ):
     """Get paginated list of notes for authenticated user"""
-    skip = (page - 1) * page_size
-    notes, total = NoteService.get_notes(
-        db, 
-        user_id=user_id,  # Pass user_id to service
-        skip=skip, 
-        limit=page_size, 
-        tag=tag
-    )
-    
-    return NoteListResponse(
-        notes=notes,  # type: ignore
-        total=total,
-        page=page,
-        page_size=page_size
-    )
+    try:
+        skip = (page - 1) * page_size
+        notes, total = NoteService.get_notes(
+            db, 
+            user_id=user_id,  
+            skip=skip, 
+            limit=page_size, 
+            tag=tag
+        )
+        
+        return NoteListResponse(
+            notes=notes,  # type: ignore
+            total=total,
+            page=page,
+            page_size=page_size
+        )
+    except Exception as e:
+        print(f"Error in list_notes: {e}")  # Debug logging
+        import traceback
+        traceback.print_exc()  # Full stack trace
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to fetch notes: {str(e)}"
+        )
 
 @router.get("/{note_id}", response_model=NoteResponse)
 def get_note(

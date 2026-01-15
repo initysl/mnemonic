@@ -1,4 +1,6 @@
 import os
+# from dotenv import load_dotenv
+# load_dotenv()
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from sqlalchemy.pool import QueuePool

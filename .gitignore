@@ -71,3 +71,4 @@ docker-compose.override.yml
 # txt, sh
 ts.txt
 setup.sh
+*.sql
