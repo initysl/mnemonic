@@ -56,7 +56,7 @@ export default function NoteModal({
           <X size={18} />
         </button>
 
-        <div className='rounded-[32px] bg-gradient-to-b from-neutral-50 to-white shadow-[0_30px_80px_rgba(15,23,42,0.15)] p-5'>
+        <div className='rounded-[32px] bg-linear-to-b from-neutral-50 to-white shadow-[0_30px_80px_rgba(15,23,42,0.15)] p-5'>
           <div className='rounded-[28px] bg-white border border-neutral-200/60 shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden flex flex-col max-h-[70vh]'>
             {/* Header */}
             <div className='flex items-center justify-between px-6 py-5 border-b border-neutral-200/70'>

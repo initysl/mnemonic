@@ -68,13 +68,13 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       <div className='relative w-full max-w-md animate-in zoom-in-95 fade-in duration-200'>
         <button
           onClick={onClose}
-          className='absolute -top-12 right-0 rounded-full bg-white/90 p-2 text-neutral-700 shadow-lg hover:bg-white transition'
+          className='absolute -top-10 right-0 rounded-full bg-white/90 p-2 text-neutral-700 shadow-lg hover:bg-white transition'
           aria-label='Close settings'
         >
           <X size={18} />
         </button>
 
-        <div className='rounded-[32px] bg-gradient-to-b from-neutral-50 to-white shadow-[0_30px_80px_rgba(15,23,42,0.15)] p-5'>
+        <div className='rounded-[32px] bg-linear-to-b from-neutral-50 to-white shadow-[0_30px_80px_rgba(15,23,42,0.15)] p-5'>
           <div className='rounded-[28px] bg-white border border-neutral-200/60 shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden'>
             <div className='p-5 pb-0'>
               <div className='relative rounded-[24px] bg-neutral-100 border border-neutral-200 shadow-inner overflow-hidden'>
@@ -87,7 +87,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     className='h-60 w-full object-cover'
                   />
                 ) : (
-                  <div className='h-60 w-full bg-gradient-to-br from-orange-100 via-rose-100 to-amber-100 flex items-center justify-center'>
+                  <div className='w-full bg-linear-to-br from-orange-100 via-rose-100 to-amber-100 flex items-center justify-center'>
                     <span className='text-4xl font-semibold text-neutral-700'>
                       {getInitials(displayName)}
                     </span>
@@ -96,7 +96,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               </div>
             </div>
 
-            <div className='px-6 pb-6 pt-5 space-y-3'>
+            <div className='px-6 pb-3 p-5 space-y-3'>
               <div className='flex items-center gap-2'>
                 <h2 className='text-lg font-semibold text-neutral-900'>
                   {displayName}

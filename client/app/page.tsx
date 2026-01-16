@@ -78,7 +78,7 @@ export default function LandingPage() {
             }}
             className='text-5xl lg:text-6xl leading-tight tracking-tight'
           >
-            {['Your memory,', 'structured and', 'searchable.'].map((line) => (
+            {['Your notes,', 'structured and', 'searchable.'].map((line) => (
               <motion.span key={line} variants={fadeUp} className='block'>
                 {line}
               </motion.span>
