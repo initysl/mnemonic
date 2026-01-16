@@ -22,9 +22,6 @@ export const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   async (config) => {
     if (config.headers) {
-      config.headers['X-Client-Version'] = '1.0.0';
-      config.headers['X-Requested-With'] = 'XMLHttpRequest';
-
       const token = await getAuthToken();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
