@@ -60,7 +60,7 @@ export default function NoteModal({
           <div className='rounded-[28px] bg-white border border-neutral-200/60 shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden flex flex-col max-h-[70vh]'>
             {/* Header */}
             <div className='flex items-center justify-between px-6 py-5 border-b border-neutral-200/70'>
-              <h2 className='text-xl font-medium text-neutral-900'>{title}</h2>
+              <h2 className='text-lg font-medium text-neutral-900'>{title}</h2>
             </div>
 
             {/* Content - Scrollable */}

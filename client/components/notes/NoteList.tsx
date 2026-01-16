@@ -90,7 +90,8 @@ export default function NoteList({
             </div>
           ) : (
             <p className='text-sm text-blue-500 font-medium'>
-              {displayNotes.length} Notes
+              {displayNotes.length}{' '}
+              {displayNotes.length === 1 ? 'Note' : 'Notes'}
             </p>
           )}
           <button className='p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'>

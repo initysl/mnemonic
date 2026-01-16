@@ -1,13 +1,7 @@
 'use client';
 
 import { QueryResponse } from '@/types/query';
-import {
-  Sparkles,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
-} from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { TypingText, TypingTextWords } from '../effects/typing';
 import { useState } from 'react';
 
@@ -33,11 +27,13 @@ export default function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
               <TypingTextWords
                 text=' AI Reasoning'
                 delayPerWord={80}
-                className='font-semibold text-lg text-neutral-900 dark:text-neutral-100'
+                className='font-medium text-lg text-neutral-900 dark:text-neutral-100'
               />
             </div>
             <TypingTextWords
-              text={`Based on ${result.retrieved_notes.length} relevant notes`}
+              text={`Based on ${result.retrieved_notes.length} relevant ${
+                result.retrieved_notes.length === 1 ? 'note' : 'notes'
+              }`}
               delayPerWord={80}
               className='text-xs text-neutral-500 dark:text-neutral-400'
             />

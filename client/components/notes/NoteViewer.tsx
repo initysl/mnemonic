@@ -132,10 +132,14 @@ export default function NoteViewer({
               <NotebookText size={32} className='text-neutral-400' />
             </div>
             <p className='text-neutral-600 dark:text-neutral-400 font-medium mb-2'>
-              Select a note to view
+              {queryResult
+                ? 'Click a cited note to view the full details'
+                : 'Select a note to view'}
             </p>
             <p className='text-sm text-neutral-500'>
-              Click on any note from the list
+              {queryResult
+                ? 'Click a cited note in the AI answer above'
+                : 'Click on any note from the list'}
             </p>
           </div>
         )}

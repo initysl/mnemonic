@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { CheckCircle2, FileText, Layers, X } from 'lucide-react';
+import { CheckCircle2, FileText, X } from 'lucide-react';
 import { useDeleteAllNotes, useNoteStats } from '@/hooks/useNotes';
 import Image from 'next/image';
 import { toast } from 'sonner';
@@ -98,10 +98,10 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
             <div className='px-6 pb-6 pt-5 space-y-3'>
               <div className='flex items-center gap-2'>
-                <h2 className='text-xl font-semibold text-neutral-900'>
+                <h2 className='text-lg font-semibold text-neutral-900'>
                   {displayName}
                 </h2>
-                <CheckCircle2 size={18} className='text-emerald-500' />
+                <CheckCircle2 size={18} className='text-blue-500' />
               </div>
               <p className='text-sm text-neutral-500'>{subtitle}</p>
 

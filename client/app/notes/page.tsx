@@ -25,13 +25,14 @@ export default function AllNotesPage() {
   );
   const [mobileViewerOpen, setMobileViewerOpen] = useState(Boolean(noteParam));
   const [queryResult, setQueryResult] = useState<QueryResponse | null>(null);
+  const [answerSelectedNoteId, setAnswerSelectedNoteId] = useState<
+    string | null
+  >(null);
 
-  // Search state
   const [searchResults, setSearchResults] = useState<RetrievedNote[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchMode, setIsSearchMode] = useState(false);
 
-  // Modal states
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [noteToEdit, setNoteToEdit] = useState<any>(null);
@@ -46,7 +47,7 @@ export default function AllNotesPage() {
       setSelectedNoteId(noteParam);
       setMobileViewerOpen(Boolean(noteParam));
     }
-  }, [noteParam]); // Remove selectedNoteId from deps to prevent loop
+  }, [noteParam]);
 
   // Update URL when selection changes (debounced to prevent loops)
   const updateURL = useCallback(
@@ -87,6 +88,7 @@ export default function AllNotesPage() {
       setSearchResults(results);
       setSearchQuery(query);
       setIsSearchMode(results.length > 0 || query.length > 0);
+      setAnswerSelectedNoteId(null);
 
       // Clear selection when search changes
       if (results.length === 0) {
@@ -110,12 +112,20 @@ export default function AllNotesPage() {
   // Handle answer note click
   const handleAnswerNoteClick = useCallback(
     (noteId: string) => {
+      setAnswerSelectedNoteId(noteId);
       setSelectedNoteId(noteId);
       setMobileViewerOpen(true);
       updateURL(noteId);
     },
     [updateURL]
   );
+
+  const handleQueryResult = useCallback((result: QueryResponse | null) => {
+    setQueryResult(result);
+    setAnswerSelectedNoteId(null);
+  }, []);
+
+  const viewerNoteId = queryResult ? answerSelectedNoteId : selectedNoteId;
 
   // Create Note Handler
   const handleCreateNote = async (data: any) => {
@@ -185,7 +195,7 @@ export default function AllNotesPage() {
           {/* Viewer */}
           <div className='overflow-y-auto rounded-2xl bg-white dark:bg-neutral-900 shadow-sm'>
             <NoteViewer
-              noteId={selectedNoteId}
+              noteId={viewerNoteId}
               onEditClick={openEditModal}
               queryResult={queryResult}
               onAnswerNoteClick={handleAnswerNoteClick}
@@ -197,7 +207,7 @@ export default function AllNotesPage() {
             <NoteQuery
               onSearchResults={handleSearchResults}
               onVoiceResultSelect={handleVoiceResultSelect}
-              onQueryResult={setQueryResult}
+              onQueryResult={handleQueryResult}
             />
           </div>
         </section>
@@ -219,7 +229,7 @@ export default function AllNotesPage() {
               <NoteQuery
                 onSearchResults={handleSearchResults}
                 onVoiceResultSelect={handleVoiceResultSelect}
-                onQueryResult={setQueryResult}
+                onQueryResult={handleQueryResult}
               />
             </div>
           </>
@@ -237,7 +247,7 @@ export default function AllNotesPage() {
               </span>
             </div>
             <NoteViewer
-              noteId={selectedNoteId}
+              noteId={viewerNoteId}
               onEditClick={openEditModal}
               queryResult={queryResult}
               onAnswerNoteClick={handleAnswerNoteClick}
