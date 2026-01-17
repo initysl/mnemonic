@@ -187,6 +187,7 @@ export default function AllNotesPage() {
             selectedId={selectedNoteId}
             searchResults={isSearchMode ? searchResults : undefined}
             searchQuery={searchQuery}
+            onClearSearch={() => handleSearchResults([], '')}
           />
         </section>
 
@@ -223,6 +224,7 @@ export default function AllNotesPage() {
                 selectedId={selectedNoteId}
                 searchResults={isSearchMode ? searchResults : undefined}
                 searchQuery={searchQuery}
+                onClearSearch={() => handleSearchResults([], '')}
               />
             </div>
             <div className='border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>

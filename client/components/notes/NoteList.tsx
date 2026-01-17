@@ -12,6 +12,7 @@ interface NoteListProps {
   selectedId: string | null;
   searchResults?: RetrievedNote[];
   searchQuery?: string;
+  onClearSearch?: () => void;
 }
 
 export default function NoteList({
@@ -19,6 +20,7 @@ export default function NoteList({
   selectedId,
   searchResults,
   searchQuery,
+  onClearSearch,
 }: NoteListProps) {
   const { data, isLoading, error } = useNotesList({ page: 1, page_size: 50 });
 
@@ -94,12 +96,22 @@ export default function NoteList({
               {displayNotes.length === 1 ? 'Note' : 'Notes'}
             </p>
           )}
-          <button className='p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'>
-            <SlidersHorizontal
-              size={18}
-              className='text-neutral-600 dark:text-neutral-400'
-            />
-          </button>
+          <div className='flex items-center gap-2'>
+            {isSearchMode && (
+              <button
+                onClick={onClearSearch}
+                className='text-xs font-medium text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 rounded-full px-3 py-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition'
+              >
+                Clear
+              </button>
+            )}
+            <button className='p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'>
+              <SlidersHorizontal
+                size={18}
+                className='text-neutral-600 dark:text-neutral-400'
+              />
+            </button>
+          </div>
         </div>
       </div>
 
