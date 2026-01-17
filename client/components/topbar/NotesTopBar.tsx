@@ -51,14 +51,30 @@ export default function NotesTopBar({
     {
       name: 'Settings',
       icon: Settings,
-      href: onSettingsClick ? undefined : '/dashboard/settings',
+      href: onSettingsClick ? '#settings' : undefined,
       onClick: onSettingsClick,
     },
   ];
 
   return (
-    <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
-      <div className='flex justify-center sm:justify-start'>
+    <div className='flex items-center gap-3'>
+      <div className='flex-1 flex items-center justify-start'>
+        {user && (
+          <div className='flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-300'>
+            <Image
+              src={user.picture ?? `ui-avatars.com{user.name}`}
+              alt='user profile picture'
+              width={32}
+              height={32}
+              className='rounded-full shadow-sm'
+            />
+            <div className='hidden sm:inline'>
+              <span>{user.name}</span>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className='flex items-center justify-center'>
         <div className='bg-neutral-100 dark:bg-neutral-800 px-3 py-2 rounded-2xl shadow-lg'>
           <ul className='flex items-center gap-2'>
             {actions.map((item) => {
@@ -112,7 +128,7 @@ export default function NotesTopBar({
           </ul>
         </div>
       </div>
-      <div className='flex items-center justify-end gap-2 sm:gap-3'>
+      <div className='flex-1 flex items-center justify-end'>
         <button
           type='button'
           aria-label='Toggle theme'
@@ -125,20 +141,6 @@ export default function NotesTopBar({
             <Moon size={18} />
           )}
         </button>
-        {user && (
-          <div className='flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-300'>
-            <Image
-              src={user.picture ?? `ui-avatars.com{user.name}`}
-              alt='user profile picture'
-              width={32}
-              height={32}
-              className='rounded-full shadow-sm'
-            />
-            <div className='hidden sm:inline'>
-              <span>{user.name}</span>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
