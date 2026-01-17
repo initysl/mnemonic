@@ -3,14 +3,14 @@
 import { QueryResponse } from '@/types/query';
 import { Sparkles } from 'lucide-react';
 import { TypingText, TypingTextWords } from '../effects/typing';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
 interface QueryAnswerProps {
   result: QueryResponse;
   onNoteClick?: (noteId: string) => void;
 }
 
-export default function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
+function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
   const [typingComplete, setTypingComplete] = useState(false);
 
   return (
@@ -90,3 +90,5 @@ export default function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
     </div>
   );
 }
+
+export default memo(QueryAnswer);
