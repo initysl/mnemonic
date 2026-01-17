@@ -1,5 +1,6 @@
 import { ApiError, ApiErrorResponse } from '@/types/mtype';
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import { getAuthToken } from '@/lib/auth';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000/api/v1';
@@ -19,10 +20,12 @@ export const apiClient: AxiosInstance = axios.create({
 });
 
 apiClient.interceptors.request.use(
-  (config) => {
+  async (config) => {
     if (config.headers) {
-      config.headers['X-Client-Version'] = '1.0.0';
-      config.headers['X-Requested-With'] = 'XMLHttpRequest';
+      const token = await getAuthToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },

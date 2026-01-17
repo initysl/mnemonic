@@ -10,6 +10,7 @@ class Note(Base):
     __tablename__ = "notes"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(String, nullable=False, index=True)
     title = Column(String(255), nullable=False, index=True)
     content = Column(Text, nullable=False)
     tags = Column(ARRAY(String), nullable=False, server_default='{}')

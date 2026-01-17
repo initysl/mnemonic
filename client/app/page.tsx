@@ -5,6 +5,11 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { FaGithubSquare } from 'react-icons/fa';
 import { useUser } from '@auth0/nextjs-auth0/client';
+<<<<<<< HEAD
+=======
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+>>>>>>> new
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -49,6 +54,7 @@ function QuerySuggestions() {
 
 export default function LandingPage() {
   const { user, isLoading } = useUser();
+<<<<<<< HEAD
 
   return (
     <main className='min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 px-3'>
@@ -82,6 +88,21 @@ export default function LandingPage() {
         </div>
       </header>
       <section className='patua max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-16 '>
+=======
+  const router = useRouter();
+
+  const handleContinue = () => {
+    if (user) {
+      router.push('/notes');
+    } else {
+      router.push('/auth/login');
+    }
+  };
+
+  return (
+    <main className='min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 px-3'>
+      <section className='patua max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-16'>
+>>>>>>> new
         <motion.div
           initial='hidden'
           animate='visible'
@@ -95,9 +116,9 @@ export default function LandingPage() {
             variants={{
               visible: { transition: { staggerChildren: 0.12 } },
             }}
-            className='text-5xl lg:text-6xl leading-tight tracking-tight '
+            className='text-5xl lg:text-6xl leading-tight tracking-tight'
           >
-            {['Your memory,', 'structured and', 'searchable.'].map((line) => (
+            {['Your notes,', 'structured and', 'searchable.'].map((line) => (
               <motion.span key={line} variants={fadeUp} className='block'>
                 {line}
               </motion.span>
@@ -109,16 +130,14 @@ export default function LandingPage() {
             <span className='bg-orange-500 p-1 text-white'>
               your notes into a living knowledge base
             </span>
-            . Write naturally, then ask questions, by text or voice and get
-            precise answers from your own{' '}
-            <span className='bg-orange-500 p-1 text-white'>thoughts</span>. ~{' '}
-            {''}
-            <span className='italic underline '>
-              Coupled with llm reasoning
-            </span>
+            . Write naturally, then ask questions naturally, by text or voice
+            and get precise answers from your own{' '}
+            <span className='bg-orange-500 p-1 text-white'>notes</span>. ~{' '}
+            <span className='italic underline'>Coupled with llm reasoning</span>
           </p>
 
           <div className='flex items-center gap-4'>
+<<<<<<< HEAD
             <Link
               className='cursor-pointer rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition'
               href={user ? '/dashboard' : '/api/auth/login'}
@@ -128,6 +147,23 @@ export default function LandingPage() {
             <span className='text-sm bg-green-500 p-1 text-white'>
               No setup. No friction.
             </span>
+=======
+            <button
+              onClick={handleContinue}
+              disabled={isLoading}
+              className='cursor-pointer rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition disabled:opacity-50 disabled:cursor-not-allowed'
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className='animate-spin' size={16} />
+                </>
+              ) : user ? (
+                'Continue to Notes'
+              ) : (
+                'Sign in '
+              )}
+            </button>
+>>>>>>> new
           </div>
         </motion.div>
 
@@ -197,7 +233,7 @@ export default function LandingPage() {
           <Link href='https://github.com/initysl' target='_blank'>
             <FaGithubSquare
               size={30}
-              className=' text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition cursor-pointer'
+              className='text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition cursor-pointer'
             />
           </Link>
         </div>

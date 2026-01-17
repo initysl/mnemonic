@@ -43,6 +43,11 @@ class NoteDeleteResponse(BaseModel):
     message: str
     deleted_id: UUID
 
+class NoteDeleteAllResponse(BaseModel):
+    """Bulk delete confirmation"""
+    message: str
+    deleted_count: int
+
 class NoteStatsResponse(BaseModel):
     """Note statistics response"""
     total_notes: int
