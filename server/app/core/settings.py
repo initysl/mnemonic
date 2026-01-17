@@ -13,8 +13,11 @@ class Settings(BaseSettings):
 
     environment: str = Field(default="development", alias="ENVIRONMENT")
     cors_origins: str = Field(default="http://localhost:3000", alias="CORS_ORIGINS")
-    cors_allow_methods: str = Field(default="*", alias="CORS_ALLOW_METHODS")
-    cors_allow_headers: str = Field(default="*", alias="CORS_ALLOW_HEADERS")
+    cors_allow_methods: List[str] = Field(default=["GET", "POST", "PUT", "DELETE", "OPTIONS"], alias="CORS_ALLOW_METHODS")
+    cors_allow_headers: str = Field(
+        default="Authorization, Content-Type, Accept",
+        alias="CORS_ALLOW_HEADERS",
+    )
     cors_allow_credentials: bool = Field(default=True, alias="CORS_ALLOW_CREDENTIALS")
     docs_enabled: Optional[bool] = Field(default=None, alias="DOCS_ENABLED")
 
@@ -39,6 +42,8 @@ class Settings(BaseSettings):
 
     @property
     def cors_methods_list(self) -> List[str]:
+        if isinstance(self.cors_allow_methods, list):
+            return self.cors_allow_methods
         return self._split_csv(self.cors_allow_methods)
 
     @property
