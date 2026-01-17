@@ -2,9 +2,9 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: mnemonic
-      POSTGRES_PASSWORD: mnemonic
-      POSTGRES_DB: mnemonic
+      POSTGRES_USER: ${POSTGRES_USER:-mnemonic}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mnemonic}
+      POSTGRES_DB: ${POSTGRES_DB:-mnemonic}
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./server/scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
@@ -13,8 +13,11 @@ services:
 
   server:
     build: ./server
+    env_file:
+      - .env
+      - ./server/.env
     environment:
-      DATABASE_URL: postgresql+psycopg2://mnemonic:mnemonic@db:5432/mnemonic
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-mnemonic}:${POSTGRES_PASSWORD:-mnemonic}@db:5432/${POSTGRES_DB:-mnemonic}
       AUTH0_DOMAIN: ${AUTH0_DOMAIN}
       AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
       GROQ_API_KEY: ${GROQ_API_KEY}
@@ -29,6 +32,8 @@ services:
       context: ./client
       args:
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
+    env_file:
+      - .env
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
       APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3000}
