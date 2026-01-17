@@ -21,7 +21,7 @@ export default function AllNotesPage() {
   const noteParam = searchParams.get('note');
 
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(
-    noteParam
+    noteParam,
   );
   const [mobileViewerOpen, setMobileViewerOpen] = useState(Boolean(noteParam));
   const [queryResult, setQueryResult] = useState<QueryResponse | null>(null);
@@ -69,7 +69,7 @@ export default function AllNotesPage() {
         router.replace(newUrl, { scroll: false });
       }
     },
-    [pathname, router, searchParams]
+    [pathname, router, searchParams],
   );
 
   // Handle note selection with URL update
@@ -79,7 +79,7 @@ export default function AllNotesPage() {
       setMobileViewerOpen(true);
       updateURL(id);
     },
-    [updateURL]
+    [updateURL],
   );
 
   // Handle search results
@@ -96,7 +96,7 @@ export default function AllNotesPage() {
         updateURL(null);
       }
     },
-    [updateURL]
+    [updateURL],
   );
 
   // Handle voice query result
@@ -106,7 +106,7 @@ export default function AllNotesPage() {
       setMobileViewerOpen(true);
       updateURL(noteId);
     },
-    [updateURL]
+    [updateURL],
   );
 
   // Handle answer note click
@@ -117,7 +117,7 @@ export default function AllNotesPage() {
       setMobileViewerOpen(true);
       updateURL(noteId);
     },
-    [updateURL]
+    [updateURL],
   );
 
   const handleQueryResult = useCallback((result: QueryResponse | null) => {
@@ -168,7 +168,7 @@ export default function AllNotesPage() {
   }, [updateURL]);
 
   return (
-    <div className='grid h-screen w-full grid-rows-[auto_1fr] bg-neutral-50 dark:bg-neutral-950'>
+    <div className='grid h-dvh w-full grid-rows-[auto_1fr] overflow-hidden bg-neutral-50 dark:bg-neutral-950'>
       {/* Top Bar */}
       <div className='p-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
         <NotesTopBar
@@ -214,10 +214,10 @@ export default function AllNotesPage() {
       </div>
 
       {/* Mobile Layout */}
-      <div className='lg:hidden flex flex-col overflow-hidden'>
+      <div className='lg:hidden flex flex-col overflow-hidden min-h-0'>
         {!mobileViewerOpen ? (
           <>
-            <div className='flex-1 overflow-y-auto py-4'>
+            <div className='flex-1 min-h-0 overflow-hidden'>
               <NoteList
                 onSelectNote={handleSelectNote}
                 selectedId={selectedNoteId}
@@ -234,7 +234,7 @@ export default function AllNotesPage() {
             </div>
           </>
         ) : (
-          <div className='flex-1 overflow-y-auto bg-white dark:bg-neutral-900'>
+          <div className='flex-1 min-h-0 overflow-hidden bg-white dark:bg-neutral-900'>
             <div className='sticky top-0 z-10 flex items-center gap-2 p-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
               <button
                 onClick={handleMobileBack}

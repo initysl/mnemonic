@@ -51,7 +51,7 @@ export default function NotesTopBar({
     {
       name: 'Settings',
       icon: Settings,
-      href: onSettingsClick ? '#settings' : undefined,
+      href: onSettingsClick ? undefined : '/dashboard/settings',
       onClick: onSettingsClick,
     },
   ];
