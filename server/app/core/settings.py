@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     )
 
     environment: str = Field(default="development", alias="ENVIRONMENT")
-    cors_origins: str = Field(default="http://localhost:3000", alias="CORS_ORIGINS")
+    cors_origins: str = Field(default="http://localhost:3000,https://mnemonik.vercel.app", alias="CORS_ORIGINS")
     cors_allow_methods: List[str] = Field(default=["GET", "POST", "PUT", "DELETE", "OPTIONS"], alias="CORS_ALLOW_METHODS")
     cors_allow_headers: str = Field(
         default="Authorization, Content-Type, Accept",
