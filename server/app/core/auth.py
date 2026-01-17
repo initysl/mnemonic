@@ -6,7 +6,7 @@ import requests
 from functools import lru_cache
 
 AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
-API_AUDIENCE = os.getenv("AUTH0_API_AUDIENCE")
+API_AUDIENCE = os.getenv("AUTH0_AUDIENCE")
 ALGORITHMS = ["RS256"]
 
 security = HTTPBearer()

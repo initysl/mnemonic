@@ -17,12 +17,16 @@ const geistMono = Geist_Mono({
 const changa = Changa({
   variable: '--font-changa',
   subsets: ['latin'],
+  display: 'swap',
+  preload: true,
 });
 
 const patua = Patua_One({
   variable: '--font-patua-one',
   weight: '400',
   subsets: ['latin'],
+  display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -36,8 +40,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html lang='en' suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} ${changa.variable} ${patua.variable} antialiased`}
       >
         <Providers>

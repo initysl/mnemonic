@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { FaGithubSquare } from 'react-icons/fa';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -90,9 +91,9 @@ export default function LandingPage() {
             <span className='bg-orange-500 p-1 text-white'>
               your notes into a living knowledge base
             </span>
-            . Write naturally, then ask questions, by text or voice and get
-            precise answers from your own{' '}
-            <span className='bg-orange-500 p-1 text-white'>thoughts</span>. ~{' '}
+            . Write naturally, then ask questions naturally, by text or voice
+            and get precise answers from your own{' '}
+            <span className='bg-orange-500 p-1 text-white'>notes</span>. ~{' '}
             <span className='italic underline'>Coupled with llm reasoning</span>
           </p>
 
@@ -102,35 +103,16 @@ export default function LandingPage() {
               disabled={isLoading}
               className='cursor-pointer rounded-full bg-neutral-900 dark:bg-white px-8 py-3 text-white dark:text-black font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition disabled:opacity-50 disabled:cursor-not-allowed'
             >
-              {isLoading
-                ? 'Loading...'
-                : user
-                ? 'Continue to Notes'
-                : 'Sign in '}
+              {isLoading ? (
+                <>
+                  <Loader2 className='animate-spin' size={16} />
+                </>
+              ) : user ? (
+                'Continue to Notes'
+              ) : (
+                'Sign in '
+              )}
             </button>
-
-            {/* {!isLoading && (
-              <>
-                {user ? (
-                  <Link
-                    href='/api/auth/logout'
-                    className='text-sm rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition'
-                  >
-                    Sign out
-                  </Link>
-                ) : (
-                  <Link
-                    href='/api/auth/login'
-                    className='text-sm rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition'
-                  >
-                    Sign in
-                  </Link>
-                )}
-                <span className='text-sm bg-green-500 p-1 text-white'>
-                  No setup. No friction.
-                </span>
-              </>
-            )} */}
           </div>
         </motion.div>
 

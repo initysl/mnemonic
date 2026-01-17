@@ -9,10 +9,10 @@ Your personal memory notes system.Mnemonic turns your notes into a living knowle
 
 ## Tech Stack
 
-- Frontend: Next.js (React), Tailwind CSS
+- Frontend: Next.js, Shadcn, Framer Motion
 - Backend: FastAPI, SQLAlchemy, Uvicorn
 - Database: PostgreSQL (with `pgvector`)
-- Auth: Auth0 (JWT)
+- Auth: Auth0
 - AI/ML:
   - API `Grok`
   - OpenAI Whisper `whisper-large-v3` for transcription
@@ -30,7 +30,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 export DATABASE_URL="postgresql+psycopg2://user:pass@localhost:5432/mnemonic"
 export AUTH0_DOMAIN="your-tenant.auth0.com"
-export AUTH0_API_AUDIENCE="your-api-audience"
+export AUTH0_AUDIENCE="your-api-audience"
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -42,11 +42,12 @@ API docs: `http://localhost:8000/docs`
 cd client
 npm install
 export NEXT_PUBLIC_API_BASE_URL="http://localhost:8000/api/v1"
-export AUTH0_BASE_URL="http://localhost:3000"
-export AUTH0_ISSUER_BASE_URL="https://your-tenant.auth0.com"
+export APP_BASE_URL="http://localhost:3000"
+export AUTH0_DOMAIN="your-tenant.auth0.com"
 export AUTH0_CLIENT_ID="..."
 export AUTH0_CLIENT_SECRET="..."
 export AUTH0_SECRET="..."
+export AUTH0_AUDIENCE="your-api-audience"
 npm run dev
 ```
 
@@ -69,3 +70,4 @@ Services:
 
 - The backend requires `DATABASE_URL` at startup.
 - Auth0 is required for authenticated endpoints. See `client/README.md` for client-side details.
+- Production toggles: set `ENVIRONMENT=production` to disable docs by default, and configure `CORS_ORIGINS` (comma-separated).

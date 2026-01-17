@@ -60,3 +60,15 @@ def check_db_health() -> bool:
     except Exception as e:
         logger.exception("Database health check failed")
         return False
+
+
+def ensure_pgvector_extension() -> None:
+    if engine.dialect.name != "postgresql":
+        return
+
+    try:
+        with engine.begin() as connection:
+            connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+        logger.info("pgvector extension ensured")
+    except Exception:
+        logger.exception("Failed to ensure pgvector extension")

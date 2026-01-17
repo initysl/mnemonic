@@ -1,3 +1,5 @@
+import { getAccessToken } from '@auth0/nextjs-auth0/client';
+
 let cachedToken: string | null = null;
 let tokenExpiry = 0;
 let inflightRequest: Promise<string | null> | null = null;
@@ -34,28 +36,20 @@ export async function getAuthToken(): Promise<string | null> {
     return inflightRequest;
   }
 
-  inflightRequest = fetch('/auth/access-token')
-    .then(async (response) => {
-      if (!response.ok) {
-        cachedToken = null;
-        tokenExpiry = 0;
-        return null;
-      }
-
-      const data = (await response.json()) as { token?: string };
-      if (!data.token) {
-        cachedToken = null;
-        tokenExpiry = 0;
-        return null;
-      }
-
-      cachedToken = data.token;
-      tokenExpiry = decodeTokenExpiry(data.token) ?? Date.now();
+  inflightRequest = (async () => {
+    try {
+      const token = await getAccessToken();
+      cachedToken = token;
+      tokenExpiry = decodeTokenExpiry(token) ?? Date.now();
       return cachedToken;
-    })
-    .finally(() => {
+    } catch (error) {
+      cachedToken = null;
+      tokenExpiry = 0;
+      return null;
+    } finally {
       inflightRequest = null;
-    });
+    }
+  })();
 
   return inflightRequest;
 }

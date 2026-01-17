@@ -50,17 +50,19 @@ export default function NoteModal({
       <div className='relative w-full max-w-2xl animate-in zoom-in-95 fade-in duration-200'>
         <button
           onClick={onClose}
-          className='absolute -top-10 right-0 rounded-full bg-white/90 p-2 text-neutral-700 shadow-lg hover:bg-white transition'
+        className='absolute -top-10 right-0 rounded-full bg-white/90 p-2 text-neutral-700 shadow-lg hover:bg-white transition dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800'
           aria-label='Close note modal'
         >
           <X size={18} />
         </button>
 
-        <div className='rounded-[32px] bg-linear-to-b from-neutral-50 to-white shadow-[0_30px_80px_rgba(15,23,42,0.15)] p-5'>
-          <div className='rounded-[28px] bg-white border border-neutral-200/60 shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden flex flex-col max-h-[70vh]'>
+        <div className='rounded-[32px] bg-linear-to-b from-neutral-50 to-white shadow-[0_30px_80px_rgba(15,23,42,0.15)] p-5 dark:from-neutral-900 dark:to-neutral-950'>
+          <div className='rounded-[28px] bg-white border border-neutral-200/60 shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden flex flex-col max-h-[70vh] dark:bg-neutral-900 dark:border-neutral-800'>
             {/* Header */}
-            <div className='flex items-center justify-between px-6 py-5 border-b border-neutral-200/70'>
-              <h2 className='text-lg font-medium text-neutral-900'>{title}</h2>
+            <div className='flex items-center justify-between px-6 py-5 border-b border-neutral-200/70 dark:border-neutral-800'>
+              <h2 className='text-lg font-medium text-neutral-900 dark:text-neutral-100'>
+                {title}
+              </h2>
             </div>
 
             {/* Content - Scrollable */}

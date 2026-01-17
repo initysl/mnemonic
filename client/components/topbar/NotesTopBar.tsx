@@ -1,10 +1,11 @@
 'use client';
 
-import { Settings, Plus, LayoutGrid } from 'lucide-react';
+import { Settings, Plus, LayoutGrid, Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
 
 interface NotesTopBarProps {
   onCreateClick: () => void;
@@ -18,8 +19,14 @@ export default function NotesTopBar({
   isModalOpen = false,
 }: NotesTopBarProps) {
   const { user } = useUser();
+  const { resolvedTheme, setTheme } = useTheme();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<string>('All');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!isModalOpen && activeView === 'Create') {
@@ -112,12 +119,25 @@ export default function NotesTopBar({
               alt='user profile picture'
               width={30}
               height={30}
-              quality={100}
               className='rounded-full shadow-sm '
             />
             <div className='hidden sm:inline'>
               <span className=''>{user.name}</span>
             </div>
+            <button
+              type='button'
+              aria-label='Toggle theme'
+              onClick={() =>
+                setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+              }
+              className='ml-1 flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 shadow-sm transition hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800'
+            >
+              {mounted && resolvedTheme === 'dark' ? (
+                <Sun size={18} />
+              ) : (
+                <Moon size={18} />
+              )}
+            </button>
           </div>
         )}
       </div>

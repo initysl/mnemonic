@@ -16,7 +16,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg2://mnemonic:mnemonic@db:5432/mnemonic
       AUTH0_DOMAIN: ${AUTH0_DOMAIN}
-      AUTH0_API_AUDIENCE: ${AUTH0_API_AUDIENCE}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
       GROQ_API_KEY: ${GROQ_API_KEY}
       HF_TOKEN: ${HF_TOKEN}
     depends_on:
@@ -31,8 +31,8 @@ services:
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
-      AUTH0_BASE_URL: ${AUTH0_BASE_URL:-http://localhost:3000}
-      AUTH0_ISSUER_BASE_URL: ${AUTH0_ISSUER_BASE_URL}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3000}
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
       AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID}
       AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET}
       AUTH0_SECRET: ${AUTH0_SECRET}
