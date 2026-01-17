@@ -9,7 +9,7 @@ services:
       - db_data:/var/lib/postgresql/data
       - ./server/scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
   server:
     build: ./server

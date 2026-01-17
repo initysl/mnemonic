@@ -57,87 +57,86 @@ export default function NotesTopBar({
   ];
 
   return (
-    <div className='flex items-center justify-between gap-4'>
-      <div className='flex-1' />
-      <div className='bg-neutral-100 dark:bg-neutral-800 px-3 py-2 rounded-2xl shadow-lg'>
-        <ul className='flex items-center gap-2'>
-          {actions.map((item) => {
-            const isHovered = hoveredItem === item.name;
-            const isActive = activeView === item.name;
-            const showActive = isActive || isHovered;
+    <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+      <div className='flex justify-center sm:justify-start'>
+        <div className='bg-neutral-100 dark:bg-neutral-800 px-3 py-2 rounded-2xl shadow-lg'>
+          <ul className='flex items-center gap-2'>
+            {actions.map((item) => {
+              const isHovered = hoveredItem === item.name;
+              const isActive = activeView === item.name;
+              const showActive = isActive || isHovered;
 
-            const buttonContent = (
-              <>
-                <item.icon size={20} className='shrink-0' />
-                {showActive && (
-                  <span className='text-sm font-medium whitespace-nowrap'>
-                    {item.name}
-                  </span>
-                )}
-              </>
-            );
+              const buttonContent = (
+                <>
+                  <item.icon size={20} className='shrink-0' />
+                  {showActive && (
+                    <span className='hidden sm:inline text-sm font-medium whitespace-nowrap'>
+                      {item.name}
+                    </span>
+                  )}
+                </>
+              );
 
-            const baseClasses =
-              'relative flex items-center gap-2 transition-all duration-100 rounded-xl';
-            const activeClasses = showActive
-              ? 'bg-blue-600 text-white px-4 py-2 shadow-md scale-105'
-              : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 p-2';
+              const baseClasses =
+                'relative flex items-center gap-2 transition-all duration-100 rounded-xl';
+              const activeClasses = showActive
+                ? 'bg-blue-600 text-white px-3 py-2 sm:px-4 sm:py-2 shadow-md scale-105'
+                : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 p-2';
 
-            return (
-              <li key={item.name}>
-                {item.href ? (
-                  <Link
-                    href={item.href}
-                    onMouseEnter={() => setHoveredItem(item.name)}
-                    onMouseLeave={() => setHoveredItem(null)}
-                    className={`${baseClasses} ${activeClasses}`}
-                    aria-label={item.name}
-                  >
-                    {buttonContent}
-                  </Link>
-                ) : (
-                  <button
-                    onClick={item.onClick}
-                    onMouseEnter={() => setHoveredItem(item.name)}
-                    onMouseLeave={() => setHoveredItem(null)}
-                    className={`${baseClasses} ${activeClasses}`}
-                    aria-label={item.name}
-                  >
-                    {buttonContent}
-                  </button>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+              return (
+                <li key={item.name}>
+                  {item.href ? (
+                    <Link
+                      href={item.href}
+                      onMouseEnter={() => setHoveredItem(item.name)}
+                      onMouseLeave={() => setHoveredItem(null)}
+                      className={`${baseClasses} ${activeClasses}`}
+                      aria-label={item.name}
+                    >
+                      {buttonContent}
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={item.onClick}
+                      onMouseEnter={() => setHoveredItem(item.name)}
+                      onMouseLeave={() => setHoveredItem(null)}
+                      className={`${baseClasses} ${activeClasses}`}
+                      aria-label={item.name}
+                    >
+                      {buttonContent}
+                    </button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
-      <div className='flex-1 flex justify-around'>
+      <div className='flex items-center justify-end gap-2 sm:gap-3'>
+        <button
+          type='button'
+          aria-label='Toggle theme'
+          onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+          className='flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 shadow-sm transition hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800'
+        >
+          {mounted && resolvedTheme === 'dark' ? (
+            <Sun size={18} />
+          ) : (
+            <Moon size={18} />
+          )}
+        </button>
         {user && (
           <div className='flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-300'>
             <Image
               src={user.picture ?? `ui-avatars.com{user.name}`}
               alt='user profile picture'
-              width={30}
-              height={30}
-              className='rounded-full shadow-sm '
+              width={32}
+              height={32}
+              className='rounded-full shadow-sm'
             />
             <div className='hidden sm:inline'>
-              <span className=''>{user.name}</span>
+              <span>{user.name}</span>
             </div>
-            <button
-              type='button'
-              aria-label='Toggle theme'
-              onClick={() =>
-                setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
-              }
-              className='ml-1 flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 shadow-sm transition hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800'
-            >
-              {mounted && resolvedTheme === 'dark' ? (
-                <Sun size={18} />
-              ) : (
-                <Moon size={18} />
-              )}
-            </button>
           </div>
         )}
       </div>
