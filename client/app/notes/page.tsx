@@ -217,7 +217,7 @@ export default function AllNotesPage() {
       <div className='lg:hidden flex flex-col overflow-hidden min-h-0'>
         {!mobileViewerOpen ? (
           <>
-            <div className='flex-1 min-h-0 overflow-hidden'>
+            <div className='flex-1 overflow-y-auto py-4'>
               <NoteList
                 onSelectNote={handleSelectNote}
                 selectedId={selectedNoteId}
@@ -234,7 +234,7 @@ export default function AllNotesPage() {
             </div>
           </>
         ) : (
-          <div className='flex-1 min-h-0 overflow-hidden bg-white dark:bg-neutral-900'>
+          <div className='flex-1 overflow-y-auto bg-white dark:bg-neutral-900'>
             <div className='sticky top-0 z-10 flex items-center gap-2 p-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
               <button
                 onClick={handleMobileBack}
