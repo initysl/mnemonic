@@ -91,7 +91,7 @@ export default function LandingPage({ user }: LandingPageProps) {
           </motion.h1>
 
           <p className='text-neutral-600 dark:text-neutral-400 max-w-xl text-md leading-relaxed'>
-            Mnemonic turns{' '}
+            Your voice-first personal memory notes system. Mnemonic turns{' '}
             <span className='bg-orange-500 p-1 text-white'>
               your notes into a living knowledge base
             </span>
