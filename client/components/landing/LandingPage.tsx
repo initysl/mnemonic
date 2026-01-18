@@ -167,18 +167,32 @@ export default function LandingPage({ user }: LandingPageProps) {
         </motion.div>
       </section>
 
-      <footer className='patua py-6 flex items-center justify-center gap-5 text-sm text-neutral-500 dark:text-neutral-400 border-t border-neutral-200 dark:border-neutral-800'>
-        <div>
-          © {new Date().getFullYear()} Mnemonic — remember less, think{' '}
-          <span className='bg-green-500 p-1 text-white'>better</span>
-        </div>
-        <div>
-          <Link href='https://github.com/initysl' target='_blank'>
-            <FaGithubSquare
-              size={30}
-              className='text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition cursor-pointer'
-            />
-          </Link>
+      <footer className='patua border-t border-neutral-200 dark:border-neutral-800'>
+        <div className='mx-auto max-w-6xl px-4 py-6 flex flex-col items-center gap-4 text-sm text-neutral-500 dark:text-neutral-400 sm:flex-row sm:justify-between'>
+          <div className='text-center sm:text-left'>
+            © {new Date().getFullYear()} Mnemonic — remember less, think{' '}
+            <span className='bg-green-500 p-1 text-white'>better</span>
+          </div>
+          <div className='flex flex-wrap items-center justify-center gap-4'>
+            <Link
+              href='/privacy'
+              className='hover:text-neutral-900 dark:hover:text-neutral-100 transition'
+            >
+              Privacy
+            </Link>
+            <Link
+              href='/terms'
+              className='hover:text-neutral-900 dark:hover:text-neutral-100 transition'
+            >
+              Terms
+            </Link>
+            <Link href='https://github.com/initysl' target='_blank'>
+              <FaGithubSquare
+                size={28}
+                className='text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition cursor-pointer'
+              />
+            </Link>
+          </div>
         </div>
       </footer>
     </main>

@@ -121,7 +121,13 @@ export default function TermsPage() {
           <section className='space-y-3'>
             <h2 className='text-lg font-semibold text-neutral-900'>Contact</h2>
             <p>
-              Questions about these Terms can be sent to support@mnemonic.app.
+              Questions about these Terms can be sent to{' '}
+              <a
+                href='https://github.com/initysl'
+                className='text-blue-500 underline'
+              >
+                initysl.
+              </a>
             </p>
           </section>
         </div>

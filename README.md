@@ -1,6 +1,6 @@
 # Mnemonic
 
-Your personal memory notes system.Mnemonic turns your notes into a living knowledge base. Write naturally, then ask questions, by text or voice and get precise answers from your own thoughts.
+Your personal memory notes system. Mnemonic turns your notes into a living knowledge base. Write naturally, then ask questions, by text or voice and get precise answers from your own thoughts.
 
 ## Structure
 

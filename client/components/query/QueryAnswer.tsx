@@ -3,7 +3,7 @@
 import { QueryResponse } from '@/types/query';
 import { Sparkles } from 'lucide-react';
 import { TypingText, TypingTextWords } from '../effects/typing';
-import { memo, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 interface QueryAnswerProps {
   result: QueryResponse;
@@ -12,9 +12,27 @@ interface QueryAnswerProps {
 
 function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
   const [typingComplete, setTypingComplete] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setTypingComplete(false);
+  }, [result.answer]);
+
+  useEffect(() => {
+    if (typingComplete) return;
+
+    const interval = setInterval(() => {
+      containerRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, [typingComplete, result.answer]);
 
   return (
-    <div className='space-y-4'>
+    <div ref={containerRef} className='space-y-4'>
       {/* AI Answer Card */}
       <div className='rounded-2xl px-2 py-3'>
         {/* Header */}
@@ -91,4 +109,7 @@ function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
   );
 }
 
-export default memo(QueryAnswer);
+export default memo(
+  QueryAnswer,
+  (prev, next) => prev.result === next.result,
+);

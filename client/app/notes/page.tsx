@@ -52,7 +52,7 @@ export default function AllNotesPage() {
   // Update URL when selection changes (debounced to prevent loops)
   const updateURL = useCallback(
     (noteId: string | null) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search);
 
       if (noteId) {
         params.set('note', noteId);
@@ -69,7 +69,7 @@ export default function AllNotesPage() {
         router.replace(newUrl, { scroll: false });
       }
     },
-    [pathname, router, searchParams],
+    [pathname, router],
   );
 
   // Handle note selection with URL update

@@ -147,7 +147,12 @@ export default function PrivacyPolicyPage() {
             </h2>
             <p>
               If you have questions about this Privacy Policy, contact us at
-              support@mnemonic.app.
+              <a
+                href='https://github.com/initysl'
+                className='text-blue-500 underline'
+              >
+                initysl.
+              </a>
             </p>
           </section>
         </div>
