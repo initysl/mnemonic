@@ -41,7 +41,7 @@ class LLMService:
         context_parts = []
         for i, note in enumerate(retrieved_notes, 1):
             context_parts.append(
-                f"Note {i} (ID: {note['id']}, Similarity: {note['similarity_score']}):\n"
+                f"Note {i} (Similarity: {note['similarity_score']}):\n"
                 f"Title: {note['title']}\n"
                 f"Content: {note['content']}\n"
                 f"Tags: {', '.join(note['tags'])}"
@@ -62,7 +62,8 @@ class LLMService:
             2. Cite specific notes by their TITLE when making claims (e.g., "According to 'Python Tips'..." or "'Database Design' mentions...")
             3. If notes don't fully answer the question, acknowledge limitations
             4. Keep the answer concise and well-organized
-            5. Use a friendly, conversational tone
+            5. Do not mention internal IDs or system metadata
+            6. Use a friendly, conversational tone
 
             Answer:"""
 

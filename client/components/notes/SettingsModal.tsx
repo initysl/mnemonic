@@ -112,7 +112,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   <div className='flex items-center gap-2'>
                     <FileText size={16} className='text-neutral-400' />
                     <span className='font-semibold text-neutral-800 dark:text-neutral-100'>
-                      Total Notes: {isLoading ? '—' : totalNotes}
+                      {isLoading ? '—' : totalNotes}
                     </span>
                   </div>
                 </div>

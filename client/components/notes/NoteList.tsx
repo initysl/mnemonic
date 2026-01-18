@@ -105,12 +105,6 @@ export default function NoteList({
                 Clear
               </button>
             )}
-            <button className='p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'>
-              <SlidersHorizontal
-                size={18}
-                className='text-neutral-600 dark:text-neutral-400'
-              />
-            </button>
           </div>
         </div>
       </div>
