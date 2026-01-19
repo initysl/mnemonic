@@ -72,3 +72,4 @@ docker-compose.override.yml
 ts.txt
 setup.sh
 *.sql
+ui.jpg
