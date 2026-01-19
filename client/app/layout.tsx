@@ -31,7 +31,7 @@ const patua = Patua_One({
 
 const siteUrl = process.env.APP_BASE_URL ?? 'http://localhost:3000';
 const siteName = 'Mnemonic';
-const description = 'Your voice-first personal memory notes system.';
+const description = 'Your AI-Powered Note Management System';
 const ogImage = {
   url: '/og-image.png',
   width: 1200,
