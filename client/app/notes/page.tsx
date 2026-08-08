@@ -12,6 +12,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useCreateNote, useUpdateNote } from '@/hooks/useNotes';
 import { toast } from 'sonner';
 import { QueryResponse } from '@/types/query';
+import { Note, NoteCreate, NoteUpdate } from '@/types/note';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export default function AllNotesPage() {
@@ -35,7 +36,7 @@ export default function AllNotesPage() {
 
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [noteToEdit, setNoteToEdit] = useState<any>(null);
+  const [noteToEdit, setNoteToEdit] = useState<Note | null>(null);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
   const createNote = useCreateNote();
@@ -76,6 +77,7 @@ export default function AllNotesPage() {
   const handleSelectNote = useCallback(
     (id: string) => {
       setSelectedNoteId(id);
+      setAnswerSelectedNoteId(id);
       setMobileViewerOpen(true);
       updateURL(id);
     },
@@ -125,10 +127,18 @@ export default function AllNotesPage() {
     setAnswerSelectedNoteId(null);
   }, []);
 
-  const viewerNoteId = queryResult ? answerSelectedNoteId : selectedNoteId;
+  const viewerNoteId = answerSelectedNoteId ?? selectedNoteId;
+
+  const clearSearch = useCallback(() => {
+    setSearchResults([]);
+    setSearchQuery('');
+    setIsSearchMode(false);
+    setQueryResult(null);
+    setAnswerSelectedNoteId(null);
+  }, []);
 
   // Create Note Handler
-  const handleCreateNote = async (data: any) => {
+  const handleCreateNote = async (data: NoteCreate) => {
     try {
       await createNote.mutateAsync(data);
       toast.success('Note created successfully!');
@@ -136,11 +146,12 @@ export default function AllNotesPage() {
     } catch (error) {
       toast.error('Failed to create note');
       console.error('Create failed:', error);
+      throw error;
     }
   };
 
   // Edit Note Handler
-  const handleEditNote = async (data: any) => {
+  const handleEditNote = async (data: NoteUpdate) => {
     if (!noteToEdit?.id) return;
 
     try {
@@ -151,14 +162,23 @@ export default function AllNotesPage() {
     } catch (error) {
       toast.error('Failed to update note');
       console.error('Update failed:', error);
+      throw error;
     }
   };
 
   // Open Edit Modal
-  const openEditModal = useCallback((note: any) => {
+  const openEditModal = useCallback((note: Note) => {
     setNoteToEdit(note);
     setEditModalOpen(true);
   }, []);
+
+  const handleDeleted = useCallback(() => {
+    setSelectedNoteId(null);
+    setAnswerSelectedNoteId(null);
+    setQueryResult(null);
+    setMobileViewerOpen(false);
+    updateURL(null);
+  }, [updateURL]);
 
   // Handle mobile back button
   const handleMobileBack = useCallback(() => {
@@ -187,7 +207,8 @@ export default function AllNotesPage() {
             selectedId={selectedNoteId}
             searchResults={isSearchMode ? searchResults : undefined}
             searchQuery={searchQuery}
-            onClearSearch={() => handleSearchResults([], '')}
+            onClearSearch={clearSearch}
+            onCreateNote={() => setCreateModalOpen(true)}
           />
         </section>
 
@@ -200,6 +221,7 @@ export default function AllNotesPage() {
               onEditClick={openEditModal}
               queryResult={queryResult}
               onAnswerNoteClick={handleAnswerNoteClick}
+              onDeleted={handleDeleted}
             />
           </div>
 
@@ -224,7 +246,8 @@ export default function AllNotesPage() {
                 selectedId={selectedNoteId}
                 searchResults={isSearchMode ? searchResults : undefined}
                 searchQuery={searchQuery}
-                onClearSearch={() => handleSearchResults([], '')}
+                onClearSearch={clearSearch}
+                onCreateNote={() => setCreateModalOpen(true)}
               />
             </div>
             <div className='border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
@@ -253,6 +276,7 @@ export default function AllNotesPage() {
               onEditClick={openEditModal}
               queryResult={queryResult}
               onAnswerNoteClick={handleAnswerNoteClick}
+              onDeleted={handleDeleted}
             />
           </div>
         )}
@@ -266,6 +290,7 @@ export default function AllNotesPage() {
         title='Create New Note'
         submitLabel='Create'
         isLoading={createNote.isPending}
+        draftKey='new-note'
       />
 
       {/* Edit Modal */}
@@ -288,6 +313,7 @@ export default function AllNotesPage() {
         title='Edit Note'
         submitLabel='Save'
         isLoading={updateNote.isPending}
+        draftKey={noteToEdit ? `edit-note-${noteToEdit.id}` : undefined}
       />
 
       <SettingsModal

@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     )
     cors_allow_credentials: bool = Field(default=True, alias="CORS_ALLOW_CREDENTIALS")
     docs_enabled: Optional[bool] = Field(default=None, alias="DOCS_ENABLED")
+    rate_limit_per_minute: int = Field(default=60, ge=1, alias="RATE_LIMIT_PER_MINUTE")
+    max_audio_bytes: int = Field(default=10 * 1024 * 1024, ge=1, alias="MAX_AUDIO_BYTES")
 
     @property
     def is_production(self) -> bool:

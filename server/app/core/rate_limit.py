@@ -1,4 +1,6 @@
-from fastapi import Request, HTTPException
+from fastapi import Request
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Dict
@@ -38,16 +40,28 @@ class RateLimiter:
         self.requests[client_id].append(now)
         return True
     
-    async def __call__(self, request: Request):
+    def client_id(self, request: Request) -> str:
         client = request.client
-        client_ip = client.host if client else "unknown"
-
-        if not self.check_rate_limit(client_ip):
-            raise HTTPException(
-                status_code=429,
-                detail="Too many requests. Please try again later."
-            )
+        return client.host if client else "unknown"
 
 
-# Create rate limiter instance (60 requests per minute)
-rate_limiter = RateLimiter(requests_per_minute=60)
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    """Apply the local development limiter to API traffic.
+
+    Use a shared store such as Redis when running more than one API instance.
+    """
+
+    def __init__(self, app, rate_limiter: RateLimiter):
+        super().__init__(app)
+        self.rate_limiter = rate_limiter
+
+    async def dispatch(self, request: Request, call_next):
+        if request.url.path.startswith("/api/"):
+            client_id = self.rate_limiter.client_id(request)
+            if not self.rate_limiter.check_rate_limit(client_id):
+                return JSONResponse(
+                    status_code=429,
+                    content={"detail": "Too many requests. Please try again later."},
+                    headers={"Retry-After": "60"},
+                )
+        return await call_next(request)

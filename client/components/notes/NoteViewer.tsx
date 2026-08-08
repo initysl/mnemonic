@@ -14,12 +14,14 @@ import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { QueryResponse } from '@/types/query';
+import { Note } from '@/types/note';
 
 interface NoteViewerProps {
   noteId: string | null;
-  onEditClick?: (note: any) => void;
+  onEditClick?: (note: Note) => void;
   queryResult?: QueryResponse | null;
   onAnswerNoteClick?: (noteId: string) => void;
+  onDeleted?: () => void;
 }
 
 export default function NoteViewer({
@@ -27,6 +29,7 @@ export default function NoteViewer({
   onEditClick,
   queryResult,
   onAnswerNoteClick,
+  onDeleted,
 }: NoteViewerProps) {
   const { data: note, isLoading } = useNote(noteId || '');
   const deleteNote = useDeleteNote();
@@ -40,6 +43,7 @@ export default function NoteViewer({
       await deleteNote.mutateAsync(noteId);
       toast.success('Note deleted successfully');
       setShowDeleteConfirm(false);
+      onDeleted?.();
     } catch (error) {
       toast.error('Failed to delete note');
       console.error('Delete failed:', error);

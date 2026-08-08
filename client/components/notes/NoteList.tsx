@@ -1,11 +1,12 @@
 'use client';
 
 import { useNotesList } from '@/hooks/useNotes';
+import { useState } from 'react';
 import { Note } from '@/types/note';
 import { RetrievedNote } from '@/types/query';
 import NoteCard from './NoteCard';
 import NoteListSkeleton from '@/components/skeletons/NoteListSkeleton';
-import { SlidersHorizontal, NotebookText, Search } from 'lucide-react';
+import { NotebookText, Plus, Search } from 'lucide-react';
 
 interface NoteListProps {
   onSelectNote: (id: string) => void;
@@ -13,6 +14,7 @@ interface NoteListProps {
   searchResults?: RetrievedNote[];
   searchQuery?: string;
   onClearSearch?: () => void;
+  onCreateNote?: () => void;
 }
 
 export default function NoteList({
@@ -21,14 +23,18 @@ export default function NoteList({
   searchResults,
   searchQuery,
   onClearSearch,
+  onCreateNote,
 }: NoteListProps) {
-  const { data, isLoading, error } = useNotesList({ page: 1, page_size: 50 });
+  const [page, setPage] = useState(1);
+  const pageSize = 50;
+  const { data, isLoading, error } = useNotesList({ page, page_size: pageSize });
 
   // Determine which notes to display
   const isSearchMode = searchResults !== undefined;
   const displayNotes: (Note | RetrievedNote)[] = isSearchMode
     ? searchResults
     : data?.notes || [];
+  const totalPages = Math.max(1, Math.ceil((data?.total || 0) / pageSize));
 
   if (isLoading && !isSearchMode) {
     return <NoteListSkeleton />;
@@ -54,9 +60,16 @@ export default function NoteList({
         <p className='text-neutral-600 dark:text-neutral-400 mb-2 font-medium'>
           No notes yet
         </p>
-        <p className='text-sm text-neutral-500 dark:text-neutral-500'>
+        <p className='text-sm text-neutral-500 dark:text-neutral-500 mb-4'>
           Create your first note to get started
         </p>
+        <button
+          type='button'
+          onClick={onCreateNote}
+          className='inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-600'
+        >
+          <Plus size={16} /> Create note
+        </button>
       </div>
     );
   }
@@ -92,8 +105,7 @@ export default function NoteList({
             </div>
           ) : (
             <p className='text-sm text-blue-500 font-medium'>
-              {displayNotes.length}{' '}
-              {displayNotes.length === 1 ? 'Note' : 'Notes'}
+              {data?.total || 0} {data?.total === 1 ? 'Note' : 'Notes'}
             </p>
           )}
           <div className='flex items-center gap-2'>
@@ -136,6 +148,31 @@ export default function NoteList({
           ))
         )}
       </div>
+      {!isSearchMode && totalPages > 1 && (
+        <div className='flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm dark:border-neutral-800'>
+          <span className='text-neutral-500 dark:text-neutral-400'>
+            Page {page} of {totalPages}
+          </span>
+          <div className='flex gap-2'>
+            <button
+              type='button'
+              disabled={page === 1}
+              onClick={() => setPage((current) => current - 1)}
+              className='rounded-lg border border-neutral-200 px-3 py-1.5 text-neutral-700 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800'
+            >
+              Previous
+            </button>
+            <button
+              type='button'
+              disabled={page === totalPages}
+              onClick={() => setPage((current) => current + 1)}
+              className='rounded-lg border border-neutral-200 px-3 py-1.5 text-neutral-700 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800'
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

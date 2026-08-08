@@ -13,6 +13,7 @@ interface NoteModalProps {
   title: string;
   submitLabel: string;
   isLoading?: boolean;
+  draftKey?: string;
 }
 
 export default function NoteModal({
@@ -23,6 +24,7 @@ export default function NoteModal({
   title,
   submitLabel,
   isLoading = false,
+  draftKey,
 }: NoteModalProps) {
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -36,6 +38,15 @@ export default function NoteModal({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !isLoading) onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLoading, isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
@@ -47,7 +58,12 @@ export default function NoteModal({
       />
 
       {/* Modal */}
-      <div className='relative w-full max-w-2xl animate-in zoom-in-95 fade-in duration-200'>
+      <div
+        role='dialog'
+        aria-modal='true'
+        aria-labelledby='note-modal-title'
+        className='relative w-full max-w-2xl animate-in zoom-in-95 fade-in duration-200'
+      >
         <button
           onClick={onClose}
         className='absolute -top-10 right-0 rounded-full bg-white/90 p-2 text-neutral-700 shadow-lg hover:bg-white transition dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800'
@@ -60,7 +76,7 @@ export default function NoteModal({
           <div className='rounded-[28px] bg-white border border-neutral-200/60 shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden flex flex-col max-h-[70vh] dark:bg-neutral-900 dark:border-neutral-800'>
             {/* Header */}
             <div className='flex items-center justify-between px-6 py-5 border-b border-neutral-200/70 dark:border-neutral-800'>
-              <h2 className='text-lg font-medium text-neutral-900 dark:text-neutral-100'>
+              <h2 id='note-modal-title' className='text-lg font-medium text-neutral-900 dark:text-neutral-100'>
                 {title}
               </h2>
             </div>
@@ -73,6 +89,7 @@ export default function NoteModal({
                 onCancel={onClose}
                 submitLabel={submitLabel}
                 isLoading={isLoading}
+                draftKey={draftKey}
               />
             </div>
           </div>

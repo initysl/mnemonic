@@ -7,15 +7,15 @@ from uuid import UUID
 class NoteCreate(BaseModel):
     """Create new note"""
     title: str = Field(..., min_length=1, max_length=255)
-    content: str = Field(..., min_length=1)
-    tags: List[str] = Field(default_factory=list)
+    content: str = Field(..., min_length=1, max_length=50000)
+    tags: List[str] = Field(default_factory=list, max_length=20)
 
 
 class NoteUpdate(BaseModel):
     """Update existing note (all fields optional)"""
     title: Optional[str] = Field(None, min_length=1, max_length=255)
-    content: Optional[str] = Field(None, min_length=1)
-    tags: Optional[List[str]] = None
+    content: Optional[str] = Field(None, min_length=1, max_length=50000)
+    tags: Optional[List[str]] = Field(None, max_length=20)
 
 
 class NoteResponse(BaseModel):

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Query as QueryParam
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Query as QueryParam
 from sqlalchemy.orm import Session
 from typing import Optional
 import time
@@ -114,7 +114,10 @@ async def voice_query(
     start_time = time.time()
     
     # 1. Transcribe
-    transcribed_text = voice_service.transcribe_audio(audio, language=language)
+    try:
+        transcribed_text = voice_service.transcribe_audio(audio, language=language)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     
     # 2-4. Use same pipeline as text query
     query_embedding = embedding_service.generate_embedding(transcribed_text)

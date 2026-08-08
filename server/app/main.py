@@ -9,6 +9,8 @@ from contextlib import asynccontextmanager
 from app.core.database import check_db_health, ensure_pgvector_extension, engine, Base
 from app.api.v1 import api_router
 from app.core.settings import get_settings
+from app.core.middleware import RequestIDMiddleware, TimingMiddleware
+from app.core.rate_limit import RateLimiter, RateLimitMiddleware
 
 settings = get_settings()
 
@@ -47,6 +49,12 @@ app = FastAPI(
 )
 
 
+app.add_middleware(
+    RateLimitMiddleware,
+    rate_limiter=RateLimiter(settings.rate_limit_per_minute),
+)
+app.add_middleware(TimingMiddleware)
+app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,

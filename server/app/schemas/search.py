@@ -7,7 +7,7 @@ from datetime import datetime
 
 class SearchRequest(BaseModel):
     """Request schema for semantic search"""
-    query: str = Field(..., min_length=1, description="Search query text")
+    query: str = Field(..., min_length=1, max_length=2000, description="Search query text")
     top_k: int = Field(5, ge=1, le=20, description="Number of results")
     min_similarity: float = Field(0.3, ge=0.0, le=1.0, description="Minimum similarity score")
 

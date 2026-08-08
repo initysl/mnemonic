@@ -6,7 +6,7 @@ from datetime import datetime
 
 class QueryRequest(BaseModel):
     """Request for LLM-powered query"""
-    query: str = Field(..., min_length=1, description="User's question")
+    query: str = Field(..., min_length=1, max_length=2000, description="User's question")
     top_k: int = Field(5, ge=1, le=10, description="Number of notes to retrieve")
     min_similarity: float = Field(0.3, ge=0.0, le=1.0, description="Minimum similarity")
     # include_follow_ups: bool = Field(True, description="Generate follow-up questions")

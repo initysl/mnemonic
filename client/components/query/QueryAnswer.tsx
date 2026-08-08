@@ -55,6 +55,9 @@ function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
               delayPerWord={80}
               className='text-xs text-neutral-500 dark:text-neutral-400'
             />
+            <span className='mt-2 inline-flex rounded-full bg-neutral-100 px-2 py-1 text-[11px] font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300'>
+              Retrieval confidence: {result.confidence}
+            </span>
           </div>
         </div>
 
@@ -81,7 +84,8 @@ function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
                 const isCited = result.cited_notes.includes(note.id);
 
                 return (
-                  <div
+                  <button
+                    type='button'
                     key={note.id}
                     onClick={() => onNoteClick?.(note.id)}
                     className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
@@ -97,8 +101,16 @@ function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
                         delay={index * 200}
                         className='font-medium text-sm text-neutral-900 dark:text-neutral-100 line-clamp-1'
                       />
+                      <span className='shrink-0 text-xs text-neutral-500 dark:text-neutral-400'>
+                        {Math.round(note.similarity_score * 100)}% match
+                      </span>
                     </div>
-                  </div>
+                    {isCited && (
+                      <span className='mt-1 block text-xs text-blue-600 dark:text-blue-400'>
+                        Cited in answer
+                      </span>
+                    )}
+                  </button>
                 );
               })}
             </div>

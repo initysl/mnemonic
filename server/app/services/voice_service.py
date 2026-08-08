@@ -4,6 +4,7 @@ from groq import Groq
 from fastapi import UploadFile
 import tempfile
 from typing import Optional
+from app.core.settings import get_settings
 
 
 class VoiceService:
@@ -16,6 +17,7 @@ class VoiceService:
         
         self.client = Groq(api_key=api_key)
         self.model = "whisper-large-v3"
+        self.max_audio_bytes = get_settings().max_audio_bytes
         
         # Supported audio formats
         self.supported_formats = {
@@ -52,7 +54,11 @@ class VoiceService:
             suffix=self._get_file_extension(audio_file.filename)
         ) as temp_file:
             # Write uploaded content to temp file
-            content = audio_file.file.read()
+            content = audio_file.file.read(self.max_audio_bytes + 1)
+            if len(content) > self.max_audio_bytes:
+                raise ValueError(
+                    f"Audio file is too large. Maximum size is {self.max_audio_bytes // (1024 * 1024)} MB."
+                )
             temp_file.write(content)
             temp_file_path = temp_file.name
         

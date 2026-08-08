@@ -3,11 +3,12 @@
 import { Mic, Search, Loader2, Send, X } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useTextQuery, useVoiceQuery } from '@/hooks/useKuery';
+import { useSemanticSearch } from '@/hooks/useSearch';
 import { toast } from 'sonner';
-import { QueryResponse } from '@/types/query';
+import { QueryResponse, RetrievedNote } from '@/types/query';
 
 interface NoteQueryProps {
-  onSearchResults?: (results: any[], query: string) => void;
+  onSearchResults?: (results: RetrievedNote[], query: string) => void;
   onVoiceResultSelect?: (noteId: string) => void;
   onQueryResult?: (result: QueryResponse | null) => void;
 }
@@ -19,19 +20,38 @@ export default function NoteQuery({
 }: NoteQueryProps) {
   const [query, setQuery] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [mode, setMode] = useState<'ask' | 'search'>('ask');
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
   const textQuery = useTextQuery();
   const voiceQuery = useVoiceQuery();
+  const semanticSearch = useSemanticSearch();
 
-  const isSearching = textQuery.isPending || voiceQuery.isPending;
+  const isSearching =
+    textQuery.isPending || voiceQuery.isPending || semanticSearch.isPending;
   // Text Query
   const handleTextSearch = async () => {
     if (!query.trim()) return;
 
     try {
+      if (mode === 'search') {
+        const result = await semanticSearch.mutateAsync({
+          query: query.trim(),
+          top_k: 10,
+          min_similarity: 0.3,
+        });
+        onQueryResult?.(null);
+        onSearchResults?.(result.results, result.query);
+        toast.success(
+          result.results.length
+            ? `Found ${result.results.length} matching notes`
+            : 'No matching notes found',
+        );
+        return;
+      }
+
       const result = await textQuery.mutateAsync({
         query: query.trim(),
         top_k: 5,
@@ -127,14 +147,42 @@ export default function NoteQuery({
     onQueryResult?.(null);
     textQuery.reset();
     voiceQuery.reset();
+    semanticSearch.reset();
   };
 
-  const hasActiveSearch = query.trim() || textQuery.data || voiceQuery.data;
+  const hasActiveSearch =
+    query.trim() || textQuery.data || voiceQuery.data || semanticSearch.data;
 
   return (
     <div className=''>
       {/* Search Input */}
       <div className='p-5'>
+        <div className='mb-3 flex w-fit rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800'>
+          <button
+            type='button'
+            onClick={() => setMode('ask')}
+            aria-pressed={mode === 'ask'}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+              mode === 'ask'
+                ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-white'
+                : 'text-neutral-500 dark:text-neutral-400'
+            }`}
+          >
+            Ask AI
+          </button>
+          <button
+            type='button'
+            onClick={() => setMode('search')}
+            aria-pressed={mode === 'search'}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+              mode === 'search'
+                ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-white'
+                : 'text-neutral-500 dark:text-neutral-400'
+            }`}
+          >
+            Find notes
+          </button>
+        </div>
         <div className='flex items-center gap-3 p-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700'>
           {isSearching ? (
             <Loader2 className='h-5 w-5 text-blue-500 animate-spin shrink-0' />
@@ -146,7 +194,7 @@ export default function NoteQuery({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleTextSearch()}
-            placeholder='Search your notes…'
+            placeholder={mode === 'ask' ? 'Ask your notes…' : 'Find similar notes…'}
             disabled={isSearching || isRecording}
             className='flex-1 bg-transparent text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none disabled:opacity-50 min-w-0'
           />
@@ -199,7 +247,9 @@ export default function NoteQuery({
               Processing your query…
             </span>
           ) : (
-            'Try "What is in my grocery list?" or use voice'
+            mode === 'ask'
+              ? 'Ask a question about your notes, or use voice'
+              : 'Find semantically related notes without generating an AI answer'
           )}
         </div>
       </div>

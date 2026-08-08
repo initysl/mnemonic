@@ -1,15 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NoteCreate } from '@/types/note';
 import { X, Loader2, Plus, Tag as TagIcon } from 'lucide-react';
 
 interface NoteFormProps {
   initialData?: Partial<NoteCreate>;
-  onSubmit: (data: NoteCreate) => void;
+  onSubmit: (data: NoteCreate) => Promise<void> | void;
   onCancel?: () => void;
   submitLabel?: string;
   isLoading?: boolean;
+  draftKey?: string;
 }
 
 export default function NoteForm({
@@ -18,11 +19,37 @@ export default function NoteForm({
   onCancel,
   submitLabel = 'Save Note',
   isLoading = false,
+  draftKey,
 }: NoteFormProps) {
-  const [title, setTitle] = useState(initialData?.title || '');
-  const [content, setContent] = useState(initialData?.content || '');
-  const [tags, setTags] = useState<string[]>(initialData?.tags || []);
+  const [title, setTitle] = useState(() => initialData?.title || '');
+  const [content, setContent] = useState(() => initialData?.content || '');
+  const [tags, setTags] = useState<string[]>(() => initialData?.tags || []);
   const [tagInput, setTagInput] = useState('');
+
+  useEffect(() => {
+    if (!draftKey) return;
+    const savedDraft = window.localStorage.getItem(`mnemonic:draft:${draftKey}`);
+    if (!savedDraft) return;
+    try {
+      const draft = JSON.parse(savedDraft) as NoteCreate;
+      setTitle(draft.title || '');
+      setContent(draft.content || '');
+      setTags(draft.tags || []);
+    } catch {
+      window.localStorage.removeItem(`mnemonic:draft:${draftKey}`);
+    }
+  }, [draftKey]);
+
+  useEffect(() => {
+    if (!draftKey || (!title && !content && tags.length === 0)) return;
+    const timeout = window.setTimeout(() => {
+      window.localStorage.setItem(
+        `mnemonic:draft:${draftKey}`,
+        JSON.stringify({ title, content, tags }),
+      );
+    }, 400);
+    return () => window.clearTimeout(timeout);
+  }, [content, draftKey, tags, title]);
 
   const handleAddTag = () => {
     const trimmedTag = tagInput.trim().toLowerCase();
@@ -36,15 +63,12 @@ export default function NoteForm({
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) return;
 
-    onSubmit({
-      title: title.trim(),
-      content: content.trim(),
-      tags,
-    });
+    await onSubmit({ title: title.trim(), content: content.trim(), tags });
+    if (draftKey) window.localStorage.removeItem(`mnemonic:draft:${draftKey}`);
   };
 
   return (

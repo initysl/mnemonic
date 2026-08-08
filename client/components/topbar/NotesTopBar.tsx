@@ -62,7 +62,10 @@ export default function NotesTopBar({
         {user && (
           <div className='flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-300'>
             <Image
-              src={user.picture ?? `ui-avatars.com{user.name}`}
+              src={
+                user.picture ??
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name ?? 'Mnemonic User')}`
+              }
               alt='user profile picture'
               width={32}
               height={32}

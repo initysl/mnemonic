@@ -51,8 +51,9 @@ export const useDeleteNote = () => {
 
   return useMutation({
     mutationFn: (id: string) => noteAPI.deleteNote(id),
-    onSuccess: () => {
+    onSuccess: (_, noteId) => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
+      queryClient.removeQueries({ queryKey: ['note', noteId] });
     },
   });
 };
@@ -65,6 +66,7 @@ export const useDeleteAllNotes = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       queryClient.invalidateQueries({ queryKey: ['note-stats'] });
+      queryClient.removeQueries({ queryKey: ['note'] });
     },
   });
 };

@@ -4,6 +4,7 @@ from fastapi import HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import requests
 from functools import lru_cache
+from app.utils.logger import logger
 
 AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
 API_AUDIENCE = os.getenv("AUTH0_AUDIENCE")
@@ -16,11 +17,11 @@ def get_jwks():
     """Fetch Auth0 public keys"""
     jwks_url = f"https://{AUTH0_DOMAIN}/.well-known/jwks.json"
     try:
-        response = requests.get(jwks_url)
+        response = requests.get(jwks_url, timeout=5)
         response.raise_for_status()
         return response.json()
-    except Exception as e:
-        print(f"Failed to fetch JWKS: {e}")
+    except requests.RequestException as e:
+        logger.error("Failed to fetch Auth0 JWKS: %s", e)
         raise
 
 def verify_token(credentials: HTTPAuthorizationCredentials = Security(security)) -> dict:
@@ -56,12 +57,14 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Security(security))
         
         return payload
         
+    except HTTPException:
+        raise
     except JWTError as e:
-        print(f"JWT Error: {e}")  # Debug logging
-        raise HTTPException(401, f"Invalid token: {str(e)}")
+        logger.info("Invalid JWT: %s", e)
+        raise HTTPException(401, "Invalid authentication token")
     except Exception as e:
-        print(f"Auth Error: {e}")  # Debug logging
-        raise HTTPException(401, f"Authentication failed: {str(e)}")
+        logger.exception("Authentication verification failed: %s", e)
+        raise HTTPException(401, "Authentication failed")
 
 def get_user_id(token_payload: dict = Security(verify_token)) -> str:
     """Extract user ID from verified token"""
