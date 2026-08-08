@@ -3,7 +3,9 @@ from sqlalchemy import desc, func
 from typing import List, Optional
 from uuid import UUID
 from app.models.note import Note
+from app.models.note_chunk import NoteChunk
 from app.schemas.note import NoteCreate, NoteUpdate
+from app.services.chunking_service import split_note_content
 from app.services.embedding_service import embedding_service
 
 
@@ -13,18 +15,26 @@ class NoteService:
     @staticmethod
     def create_note(db: Session, note_data: NoteCreate, user_id: str) -> Note:
         """Create new note with embedding for specific user"""
-        # Combine title and content for embedding
-        text_to_embed = f"{note_data.title}\n{note_data.content}"
-        
-        # Generate embedding
-        embedding = embedding_service.generate_embedding(text_to_embed)
+        chunks = split_note_content(note_data.content)
+        embeddings = embedding_service.generate_batch_embeddings(
+            [f"{note_data.title}\n{chunk.content}" for chunk in chunks]
+        )
         
         note = Note(
             user_id=user_id,  # Add user_id
             title=note_data.title,
             content=note_data.content,
             tags=note_data.tags,
-            embedding=embedding
+            embedding=embeddings[0],
+            chunks=[
+                NoteChunk(
+                    content=chunk.content,
+                    start_offset=chunk.start_offset,
+                    end_offset=chunk.end_offset,
+                    embedding=embedding,
+                )
+                for chunk, embedding in zip(chunks, embeddings)
+            ],
         )
         db.add(note)
         db.commit()
@@ -77,10 +87,22 @@ class NoteService:
         for field, value in update_data.items():
             setattr(note, field, value)
         
-        # Regenerate embedding if content changed
+        # Regenerate passage embeddings if title or content changed.
         if content_changed:
-            text_to_embed = f"{note.title}\n{note.content}"
-            note.embedding = embedding_service.generate_embedding(text_to_embed)  # type: ignore
+            chunks = split_note_content(note.content)
+            embeddings = embedding_service.generate_batch_embeddings(
+                [f"{note.title}\n{chunk.content}" for chunk in chunks]
+            )
+            note.embedding = embeddings[0]  # type: ignore
+            note.chunks = [
+                NoteChunk(
+                    content=chunk.content,
+                    start_offset=chunk.start_offset,
+                    end_offset=chunk.end_offset,
+                    embedding=embedding,
+                )
+                for chunk, embedding in zip(chunks, embeddings)
+            ]
         
         db.commit()
         db.refresh(note)

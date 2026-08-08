@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Text, DateTime, ARRAY
+from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from pgvector.sqlalchemy import Vector
@@ -25,6 +26,12 @@ class Note(Base):
         DateTime(timezone=True), 
         onupdate=func.now(),
         server_default=func.now()
+    )
+    chunks = relationship(
+        "NoteChunk",
+        back_populates="note",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
     
     def __repr__(self):

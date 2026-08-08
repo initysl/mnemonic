@@ -38,14 +38,15 @@ def search_notes(
     # Format results
     search_results = [
         SearchResultItem(
-            id=note.id,            # type: ignore
-            title=note.title,      # type: ignore
-            content=note.content,  # type: ignore
-            tags=note.tags,        # type: ignore
-            similarity_score=round(similarity, 3),
-            created_at=note.created_at  # type: ignore
+            id=match.note.id,
+            title=match.note.title,
+            content=match.note.content,
+            tags=match.note.tags,
+            similarity_score=round(match.similarity, 3),
+            created_at=match.note.created_at,
+            source_excerpt=match.excerpt,
         )
-        for note, similarity in results
+        for match in results
     ]
     
     return SearchResponse(

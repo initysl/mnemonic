@@ -11,6 +11,7 @@ export interface SearchResult {
   tags: string[];
   similarity_score: number;
   created_at: string;
+  source_excerpt: string;
 }
 
 export interface SearchResponse {

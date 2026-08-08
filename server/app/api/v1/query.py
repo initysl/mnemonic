@@ -46,13 +46,13 @@ def text_query(
     # Format notes for LLM
     retrieved_notes_data = [
         {
-            "id": str(note.id),
-            "title": note.title,
-            "content": note.content,
-            "tags": note.tags,
-            "similarity_score": round(similarity, 3)
+            "id": str(match.note.id),
+            "title": match.note.title,
+            "content": match.excerpt,
+            "tags": match.note.tags,
+            "similarity_score": round(match.similarity, 3),
         }
-        for note, similarity in results
+        for match in results
     ]
     
     # 3. LLM reasoning
@@ -62,9 +62,9 @@ def text_query(
     )
     
     # Determine confidence
-    if results and results[0][1] > 0.7:
+    if results and results[0].similarity > 0.7:
         confidence = "high"
-    elif results and results[0][1] > 0.5:
+    elif results and results[0].similarity > 0.5:
         confidence = "medium"
     else:
         confidence = "low"
@@ -72,14 +72,15 @@ def text_query(
     # Format response
     retrieved_notes = [
         RetrievedNote(
-            id=note.id,  # type: ignore
-            title=note.title,  # type: ignore
-            content=note.content,  # type: ignore
-            tags=note.tags,  # type: ignore
-            similarity_score=round(similarity, 3),
-            created_at=note.created_at  # type: ignore
+            id=match.note.id,
+            title=match.note.title,
+            content=match.note.content,
+            tags=match.note.tags,
+            similarity_score=round(match.similarity, 3),
+            created_at=match.note.created_at,
+            source_excerpt=match.excerpt,
         )
-        for note, similarity in results
+        for match in results
     ]
     
     execution_time = (time.time() - start_time) * 1000
@@ -132,13 +133,13 @@ async def voice_query(
     
     retrieved_notes_data = [
         {
-            "id": str(note.id),
-            "title": note.title,
-            "content": note.content,
-            "tags": note.tags,
-            "similarity_score": round(similarity, 3)
+            "id": str(match.note.id),
+            "title": match.note.title,
+            "content": match.excerpt,
+            "tags": match.note.tags,
+            "similarity_score": round(match.similarity, 3),
         }
-        for note, similarity in results
+        for match in results
     ]
     
     llm_response = llm_service.reason_over_notes(
@@ -146,18 +147,19 @@ async def voice_query(
         retrieved_notes=retrieved_notes_data
     )
     
-    confidence = "high" if results and results[0][1] > 0.7 else "medium" if results and results[0][1] > 0.5 else "low"
+    confidence = "high" if results and results[0].similarity > 0.7 else "medium" if results and results[0].similarity > 0.5 else "low"
     
     retrieved_notes = [
         RetrievedNote(
-            id=note.id,  # type: ignore
-            title=note.title,  # type: ignore
-            content=note.content,  # type: ignore
-            tags=note.tags,  # type: ignore
-            similarity_score=round(similarity, 3),
-            created_at=note.created_at  # type: ignore
+            id=match.note.id,
+            title=match.note.title,
+            content=match.note.content,
+            tags=match.note.tags,
+            similarity_score=round(match.similarity, 3),
+            created_at=match.note.created_at,
+            source_excerpt=match.excerpt,
         )
-        for note, similarity in results
+        for match in results
     ]
     
     execution_time = (time.time() - start_time) * 1000

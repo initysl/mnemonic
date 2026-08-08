@@ -12,6 +12,7 @@ export interface RetrievedNote {
   tags: string[];
   similarity_score: number;
   created_at: string;
+  source_excerpt: string;
 }
 
 export interface QueryResponse {

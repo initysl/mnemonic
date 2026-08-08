@@ -110,6 +110,9 @@ function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
                         Cited in answer
                       </span>
                     )}
+                    <p className='mt-2 line-clamp-3 whitespace-pre-wrap text-xs leading-relaxed text-neutral-600 dark:text-neutral-400'>
+                      {note.source_excerpt}
+                    </p>
                   </button>
                 );
               })}

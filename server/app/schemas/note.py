@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from typing import List, Optional, Dict
 from datetime import datetime
 from uuid import UUID
@@ -10,12 +10,26 @@ class NoteCreate(BaseModel):
     content: str = Field(..., min_length=1, max_length=50000)
     tags: List[str] = Field(default_factory=list, max_length=20)
 
+    @field_validator("content")
+    @classmethod
+    def content_must_have_text(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Content cannot be blank")
+        return value
+
 
 class NoteUpdate(BaseModel):
     """Update existing note (all fields optional)"""
     title: Optional[str] = Field(None, min_length=1, max_length=255)
     content: Optional[str] = Field(None, min_length=1, max_length=50000)
     tags: Optional[List[str]] = Field(None, max_length=20)
+
+    @field_validator("content")
+    @classmethod
+    def content_must_have_text(cls, value: Optional[str]) -> Optional[str]:
+        if value is not None and not value.strip():
+            raise ValueError("Content cannot be blank")
+        return value
 
 
 class NoteResponse(BaseModel):

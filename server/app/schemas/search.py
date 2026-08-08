@@ -20,6 +20,7 @@ class SearchResultItem(BaseModel):
     tags: List[str]
     similarity_score: float
     created_at: datetime
+    source_excerpt: str
 
 
 class SearchResponse(BaseModel):

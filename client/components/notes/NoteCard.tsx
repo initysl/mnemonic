@@ -73,7 +73,7 @@ export default function NoteCard({
             {note.title}
           </h3>
           <p className='text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 mb-3'>
-            {note.content}
+            {isRetrievedNote(note) ? note.source_excerpt : note.content}
           </p>
 
           {/* Meta */}
