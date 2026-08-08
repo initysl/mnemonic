@@ -2,9 +2,8 @@
 
 import { Note } from '@/types/note';
 import { RetrievedNote } from '@/types/query';
-import DateBadge from '@/components/shared/DateBadge';
-import { Clock, Calendar, Tag } from 'lucide-react';
-import { formatDistanceToNow, format } from 'date-fns';
+import { Clock, Calendar } from 'lucide-react';
+import { format } from 'date-fns';
 
 interface NoteCardProps {
   note: Note | RetrievedNote;
@@ -53,10 +52,12 @@ export default function NoteCard({
   };
 
   return (
-    <div
+    <button
+      type='button'
       onClick={onClick}
-      className={`p-4 rounded-2xl cursor-pointer transition-all ${
-        isSelected ? 'ring-2 ring-blue-500 shadow-md' : 'hover:shadow-md'
+      aria-pressed={isSelected}
+      className={`w-full p-4 rounded-2xl cursor-pointer text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 ${
+        isSelected ? 'ring-2 ring-blue-500 shadow-md' : 'hover:shadow-md hover:-translate-y-0.5'
       } ${bgColor}`}
     >
       <div className='flex gap-3'>
@@ -96,6 +97,6 @@ export default function NoteCard({
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

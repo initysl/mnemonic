@@ -31,7 +31,7 @@ export default function NoteViewer({
   onAnswerNoteClick,
   onDeleted,
 }: NoteViewerProps) {
-  const { data: note, isLoading } = useNote(noteId || '');
+  const { data: note, isLoading, error, refetch } = useNote(noteId || '');
   const deleteNote = useDeleteNote();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const hasQueryAnswer = Boolean(queryResult);
@@ -70,13 +70,22 @@ export default function NoteViewer({
     return <NoteViewerSkeleton />;
   }
 
-  if (noteId && !note) {
+  if (noteId && error) {
     return (
-      <div className='flex items-center justify-center h-full p-8 text-center'>
-        <p className='text-neutral-500'>Note not found</p>
+      <div className='flex h-full flex-col items-center justify-center p-8 text-center'>
+        <p className='font-medium text-neutral-700 dark:text-neutral-300'>Couldn’t load this note</p>
+        <button
+          type='button'
+          onClick={() => refetch()}
+          className='mt-3 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800'
+        >
+          Try again
+        </button>
       </div>
     );
   }
+
+  if (noteId && !note) return null;
 
   return (
     <>
@@ -105,15 +114,18 @@ export default function NoteViewer({
                 </div>
                 <div className='flex gap-2'>
                   <button
+                    type='button'
                     onClick={() => onEditClick?.(note)}
-                    className='flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors text-sm font-medium'
+                    className='flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900'
                   >
                     <Edit size={16} />
                     <span className='hidden sm:inline'>Edit</span>
                   </button>
                   <button
+                    type='button'
                     onClick={() => setShowDeleteConfirm(true)}
-                    className='p-2 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors'
+                    aria-label='Delete note'
+                    className='rounded-full bg-red-100 p-2 text-red-600 transition-colors hover:bg-red-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 dark:focus-visible:ring-offset-neutral-900'
                   >
                     <Trash2 size={18} />
                   </button>
@@ -152,7 +164,7 @@ export default function NoteViewer({
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4'>
-          <div className='bg-white dark:bg-neutral-900 rounded-2xl p-6 max-w-md w-full shadow-xl'>
+          <div role='dialog' aria-modal='true' aria-labelledby='delete-note-title' className='bg-white dark:bg-neutral-900 rounded-2xl p-6 max-w-md w-full shadow-xl'>
             <div className='flex items-center gap-3 mb-4'>
               <div className='w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center'>
                 <AlertTriangle
@@ -161,7 +173,7 @@ export default function NoteViewer({
                 />
               </div>
               <div>
-                <h3 className='font-semibold text-lg text-neutral-900 dark:text-neutral-100'>
+                <h3 id='delete-note-title' className='font-semibold text-lg text-neutral-900 dark:text-neutral-100'>
                   Delete Note
                 </h3>
                 <p className='text-sm text-neutral-600 dark:text-neutral-400'>
@@ -177,6 +189,7 @@ export default function NoteViewer({
 
             <div className='flex gap-3'>
               <button
+                type='button'
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleteNote.isPending}
                 className='flex-1 px-4 py-2 text-red-600 rounded-lg border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors'
@@ -184,6 +197,7 @@ export default function NoteViewer({
                 Cancel
               </button>
               <button
+                type='button'
                 onClick={handleDelete}
                 disabled={deleteNote.isPending}
                 className='flex-1 px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2'

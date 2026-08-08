@@ -8,7 +8,7 @@ import { NoteCreate } from '@/types/note';
 interface NoteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: NoteCreate) => void;
+  onSubmit: (data: NoteCreate) => Promise<void> | void;
   initialData?: Partial<NoteCreate>;
   title: string;
   submitLabel: string;
@@ -65,8 +65,10 @@ export default function NoteModal({
         className='relative w-full max-w-2xl animate-in zoom-in-95 fade-in duration-200'
       >
         <button
+          type='button'
           onClick={onClose}
-        className='absolute -top-10 right-0 rounded-full bg-white/90 p-2 text-neutral-700 shadow-lg hover:bg-white transition dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800'
+          disabled={isLoading}
+          className='absolute -top-10 right-0 rounded-full bg-white/90 p-2 text-neutral-700 shadow-lg transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800'
           aria-label='Close note modal'
         >
           <X size={18} />

@@ -193,8 +193,14 @@ export default function NoteQuery({
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleTextSearch()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleTextSearch();
+              }
+            }}
             placeholder={mode === 'ask' ? 'Ask your notes…' : 'Find similar notes…'}
+            aria-label={mode === 'ask' ? 'Ask your notes' : 'Find similar notes'}
             disabled={isSearching || isRecording}
             className='flex-1 bg-transparent text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none disabled:opacity-50 min-w-0'
           />
@@ -211,13 +217,19 @@ export default function NoteQuery({
 
           <button
             onClick={isRecording ? stopRecording : startRecording}
-            disabled={isSearching}
+            disabled={isSearching || mode === 'search'}
             className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors shrink-0 ${
               isRecording
                 ? 'bg-red-500 text-white hover:bg-red-600 animate-pulse'
                 : 'bg-white shadow-xl dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 disabled:opacity-50'
             }`}
-            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+            aria-label={
+              mode === 'search'
+                ? 'Voice input is available in Ask AI mode'
+                : isRecording
+                  ? 'Stop recording'
+                  : 'Start recording'
+            }
           >
             {isRecording ? (
               <div className='h-3 w-3 rounded-sm bg-white' />
@@ -249,7 +261,7 @@ export default function NoteQuery({
           ) : (
             mode === 'ask'
               ? 'Ask a question about your notes, or use voice'
-              : 'Find semantically related notes without generating an AI answer'
+              : 'Find semantically related notes without generating an AI answer. Voice is available in Ask AI mode.'
           )}
         </div>
       </div>

@@ -27,7 +27,10 @@ export default function NoteList({
 }: NoteListProps) {
   const [page, setPage] = useState(1);
   const pageSize = 50;
-  const { data, isLoading, error } = useNotesList({ page, page_size: pageSize });
+  const { data, isLoading, error, refetch } = useNotesList({
+    page,
+    page_size: pageSize,
+  });
 
   // Determine which notes to display
   const isSearchMode = searchResults !== undefined;
@@ -46,6 +49,13 @@ export default function NoteList({
         <div>
           <p className='text-red-500 mb-2'>Failed to load notes</p>
           <p className='text-sm text-neutral-500'>Please try again later</p>
+          <button
+            type='button'
+            onClick={() => refetch()}
+            className='mt-4 rounded-full bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:bg-white dark:text-neutral-900'
+          >
+            Try again
+          </button>
         </div>
       </div>
     );
@@ -97,11 +107,11 @@ export default function NoteList({
               <p className='text-sm text-blue-500 font-medium'>
                 {displayNotes.length} results
               </p>
-              {/* {searchQuery && (
-                <span className='text-xs text-neutral-500 dark:text-neutral-400'>
-                  for "{searchQuery}"
+              {searchQuery && (
+                <span className='max-w-40 truncate text-xs text-neutral-500 dark:text-neutral-400'>
+                  for “{searchQuery}”
                 </span>
-              )} */}
+              )}
             </div>
           ) : (
             <p className='text-sm text-blue-500 font-medium'>

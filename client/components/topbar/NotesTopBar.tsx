@@ -9,12 +9,14 @@ import { useTheme } from 'next-themes';
 
 interface NotesTopBarProps {
   onCreateClick: () => void;
+  onAllClick?: () => void;
   onSettingsClick?: () => void;
   isModalOpen?: boolean;
 }
 
 export default function NotesTopBar({
   onCreateClick,
+  onAllClick,
   onSettingsClick,
   isModalOpen = false,
 }: NotesTopBarProps) {
@@ -38,7 +40,10 @@ export default function NotesTopBar({
     {
       name: 'All',
       icon: LayoutGrid,
-      onClick: () => setActiveView('All'),
+      onClick: () => {
+        setActiveView('All');
+        onAllClick?.();
+      },
     },
     {
       name: 'Create',

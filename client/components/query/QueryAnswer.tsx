@@ -3,7 +3,7 @@
 import { QueryResponse } from '@/types/query';
 import { Sparkles } from 'lucide-react';
 import { TypingText, TypingTextWords } from '../effects/typing';
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo } from 'react';
 
 interface QueryAnswerProps {
   result: QueryResponse;
@@ -11,28 +11,8 @@ interface QueryAnswerProps {
 }
 
 function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
-  const [typingComplete, setTypingComplete] = useState(false);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    setTypingComplete(false);
-  }, [result.answer]);
-
-  useEffect(() => {
-    if (typingComplete) return;
-
-    const interval = setInterval(() => {
-      containerRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    }, 200);
-
-    return () => clearInterval(interval);
-  }, [typingComplete, result.answer]);
-
   return (
-    <div ref={containerRef} className='space-y-4'>
+    <div className='space-y-4'>
       {/* AI Answer Card */}
       <div className='rounded-2xl px-2 py-3'>
         {/* Header */}
@@ -61,22 +41,20 @@ function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
           </div>
         </div>
 
-        <div className='overflow-y-auto h-52'>
+        <div>
           {/* Answer Content with Typing */}
           <div className='prose dark:prose-invert prose-sm max-w-none'>
             <TypingText
               text={result.answer}
-              speed={20}
-              onComplete={() => setTypingComplete(true)}
+              speed={14}
               className='whitespace-pre-wrap leading-relaxed text-neutral-700 dark:text-neutral-300'
             />
           </div>
         </div>
 
-        {/* Source Notes - Show after typing completes */}
-        {typingComplete && result.retrieved_notes.length > 0 && (
-          <div className='space-y-2 mt-4'>
-            <h4 className='text-sm font-medium text-neutral-700 dark:text-neutral-300'>
+        {result.retrieved_notes.length > 0 && (
+          <section className='mt-4 space-y-2' aria-labelledby='source-notes-heading'>
+            <h4 id='source-notes-heading' className='text-sm font-medium text-neutral-700 dark:text-neutral-300'>
               Source Notes ({result.retrieved_notes.length})
             </h4>
             <div className='space-y-2 flex flex-wrap'>
@@ -117,7 +95,7 @@ function QueryAnswer({ result, onNoteClick }: QueryAnswerProps) {
                 );
               })}
             </div>
-          </div>
+          </section>
         )}
       </div>
     </div>

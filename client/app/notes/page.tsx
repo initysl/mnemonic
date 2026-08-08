@@ -92,13 +92,8 @@ export default function AllNotesPage() {
       setIsSearchMode(results.length > 0 || query.length > 0);
       setAnswerSelectedNoteId(null);
 
-      // Clear selection when search changes
-      if (results.length === 0) {
-        setSelectedNoteId(null);
-        updateURL(null);
-      }
     },
-    [updateURL],
+    [],
   );
 
   // Handle voice query result
@@ -184,6 +179,7 @@ export default function AllNotesPage() {
   const handleMobileBack = useCallback(() => {
     setMobileViewerOpen(false);
     setSelectedNoteId(null);
+    setAnswerSelectedNoteId(null);
     updateURL(null);
   }, [updateURL]);
 
@@ -193,6 +189,7 @@ export default function AllNotesPage() {
       <div className='p-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
         <NotesTopBar
           onCreateClick={() => setCreateModalOpen(true)}
+          onAllClick={clearSearch}
           onSettingsClick={() => setSettingsModalOpen(true)}
           isModalOpen={createModalOpen || editModalOpen || settingsModalOpen}
         />

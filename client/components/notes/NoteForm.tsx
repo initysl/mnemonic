@@ -53,7 +53,7 @@ export default function NoteForm({
 
   const handleAddTag = () => {
     const trimmedTag = tagInput.trim().toLowerCase();
-    if (trimmedTag && !tags.includes(trimmedTag)) {
+    if (trimmedTag && !tags.includes(trimmedTag) && tags.length < 20) {
       setTags([...tags, trimmedTag]);
       setTagInput('');
     }
@@ -75,18 +75,20 @@ export default function NoteForm({
     <form onSubmit={handleSubmit} className='space-y-6'>
       {/* Title */}
       <div>
-        <label
-          htmlFor='title'
-          className='block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300'
-        >
-          Title
-        </label>
+        <div className='mb-2 flex items-center justify-between gap-3'>
+          <label htmlFor='title' className='block text-sm font-medium text-neutral-700 dark:text-neutral-300'>
+            Title
+          </label>
+          <span className='text-xs text-neutral-500'>{title.length}/255</span>
+        </div>
         <input
           id='title'
           type='text'
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder='Enter note title...'
+          maxLength={255}
+          autoFocus
           className='w-full p-3 rounded-xl text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg'
           required
           disabled={isLoading}
@@ -95,17 +97,18 @@ export default function NoteForm({
 
       {/* Content */}
       <div>
-        <label
-          htmlFor='content'
-          className='block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300'
-        >
-          Content
-        </label>
+        <div className='mb-2 flex items-center justify-between gap-3'>
+          <label htmlFor='content' className='block text-sm font-medium text-neutral-700 dark:text-neutral-300'>
+            Content
+          </label>
+          <span className='text-xs text-neutral-500'>{content.length.toLocaleString()}/50,000</span>
+        </div>
         <textarea
           id='content'
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder='Write your note...'
+          maxLength={50000}
           rows={8}
           className='w-full p-3 rounded-xl text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none'
           required
@@ -115,9 +118,12 @@ export default function NoteForm({
 
       {/* Tags */}
       <div>
-        <label className='block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300'>
-          Tags
-        </label>
+        <div className='mb-2 flex items-center justify-between gap-3'>
+          <label className='block text-sm font-medium text-neutral-700 dark:text-neutral-300'>
+            Tags
+          </label>
+          <span className='text-xs text-neutral-500'>{tags.length}/20</span>
+        </div>
         <div className='flex gap-2 mb-3'>
           <div className='relative flex-1'>
             <TagIcon
@@ -135,14 +141,15 @@ export default function NoteForm({
                 }
               }}
               placeholder='Add a tag...'
+              maxLength={40}
               className='w-full pl-10 pr-4 py-2 rounded-lg text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
-              disabled={isLoading}
+              disabled={isLoading || tags.length >= 20}
             />
           </div>
           <button
             type='button'
             onClick={handleAddTag}
-            disabled={isLoading}
+            disabled={isLoading || !tagInput.trim() || tags.length >= 20}
             className='px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors disabled:opacity-50 flex items-center gap-2'
           >
             <Plus size={18} />
