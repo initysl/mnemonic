@@ -97,8 +97,7 @@ export default function LandingPage({ user }: LandingPageProps) {
             </span>
             . Write naturally, then ask questions naturally, by text or voice
             and get precise answers from your own{' '}
-            <span className='bg-orange-500 p-1 text-white'>notes</span>. ~{' '}
-            <span className='italic underline'>Coupled with llm reasoning</span>
+            <span className='bg-orange-500 p-1 text-white'>notes</span>.
           </p>
 
           <div className='flex items-center gap-4'>
