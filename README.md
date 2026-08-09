@@ -1,6 +1,6 @@
 # Mnemonic
 
-Your AI-Powered Note Management System. Mnemonic turns your notes into a living knowledge base. Write naturally, then ask questions, by text or voice and get precise answers from your own notes.
+AI-Powered Note Management System. Mnemonic turns your notes into a living knowledge base. Write naturally, then ask questions, by text or voice and get precise answers from your own notes.
 
 Project writeup: [Mnemonic.pdf](Mnemonic.pdf)
 
