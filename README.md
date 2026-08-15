@@ -18,7 +18,7 @@ Project writeup: [Mnemonic.pdf](Mnemonic.pdf)
 - AI/ML:
   - API `Grok`
   - OpenAI Whisper `whisper-large-v3` for transcription
-  - Meta Llama `llama-3.1-8b-instant` for note reasoning
+  - Meta Llama `openai/gpt-oss-20b` for note reasoning
   - Hugging Face Inference API `sentence-transformers/all-MiniLM-L6-v2` for embeddings
 
 ## Quickstart

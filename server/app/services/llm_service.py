@@ -14,7 +14,7 @@ class LLMService:
             raise ValueError("GROQ_API_KEY not set in environment")
         
         self.client = Groq(api_key=api_key)
-        self.model = "llama-3.1-8b-instant"  
+        self.model = "openai/gpt-oss-20b"  
     
     @retry(wait=wait_exponential(min=1, max=10), stop=stop_after_attempt(3))
     def reason_over_notes(
