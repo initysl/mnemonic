@@ -1,6 +1,6 @@
 from functools import lru_cache
 from typing import List, Optional
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -64,6 +64,22 @@ class Settings(BaseSettings):
     @property
     def cors_headers_list(self) -> List[str]:
         return self._split_csv(self.cors_allow_headers)
+
+    @model_validator(mode="after")
+    def _reject_wildcard_origin_with_credentials(self) -> "Settings":
+        """
+        Refuse the one CORS combination that is always wrong.
+        With allow_origins=["*"] and allow_credentials=True, Starlette reflects
+        whatever Origin the request carries, so any site can make credentialed
+        cross-origin calls. Fail at startup rather than serve that.
+        """
+        if "*" in self.cors_origins_list and self.cors_allow_credentials:
+            raise ValueError(
+                "CORS_ORIGINS='*' cannot be combined with "
+                "CORS_ALLOW_CREDENTIALS=true. List the allowed origins "
+                "explicitly, or set CORS_ALLOW_CREDENTIALS=false."
+            )
+        return self
 
 
 @lru_cache(maxsize=1)

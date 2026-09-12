@@ -10,11 +10,6 @@ from app.schemas.search import (
     SearchResultItem,
     SearchResponse
 )
-from app.schemas.voice import (
-    TranscriptionResponse,
-    VoiceQueryResponse,
-    VoiceSearchResult
-)
 from app.schemas.query import (
     QueryRequest,
     RetrievedNote,
@@ -30,9 +25,6 @@ __all__ = [
     "SearchRequest",
     "SearchResultItem",
     "SearchResponse",
-    "TranscriptionResponse",
-    "VoiceQueryResponse",
-    "VoiceSearchResult",
     "QueryRequest",
     "RetrievedNote",
     "QueryResponse"

@@ -14,8 +14,8 @@ export default function TermsPage() {
 
         <div className='space-y-8 text-sm leading-7 text-neutral-700'>
           <p>
-            These Terms of Service (the "Terms") govern your access to and use
-            of the Mnemonic application and related services (the "Service"). By
+            These Terms of Service (the &quot;Terms&quot;) govern your access to and use
+            of the Mnemonic application and related services (the &quot;Service&quot;). By
             using the Service, you agree to these Terms.
           </p>
 
@@ -81,7 +81,7 @@ export default function TermsPage() {
               Disclaimers
             </h2>
             <p>
-              The Service is provided "as is" and "as available" without
+              The Service is provided &quot;as is&quot; and &quot;as available&quot; without
               warranties of any kind, express or implied.
             </p>
           </section>

@@ -12,7 +12,7 @@ router = APIRouter(
     tags=["search"],
 )
 
-@router.post("/", response_model=SearchResponse)
+@router.post("", response_model=SearchResponse)
 def search_notes(
     search_req: SearchRequest,
     user_id: str = Depends(get_user_id),  # Get user_id from Auth0 token

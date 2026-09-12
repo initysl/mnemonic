@@ -17,7 +17,7 @@ export default function PrivacyPolicyPage() {
             Mnemonic is a notes and memory assistant that helps you organize and
             search your personal knowledge. This Privacy Policy explains how we
             collect, use, and share information when you use the Mnemonic
-            application and related services (the "Service").
+            application and related services (the &quot;Service&quot;).
           </p>
 
           <section className='space-y-3'>

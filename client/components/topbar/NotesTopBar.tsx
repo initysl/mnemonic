@@ -26,15 +26,19 @@ export default function NotesTopBar({
   const [activeView, setActiveView] = useState<string>('All');
   const [mounted, setMounted] = useState(false);
 
+  // The theme is only known on the client, so the first client render has to
+  // match the server's. This is next-themes' documented mount guard; there is
+  // no render-phase equivalent, since the value does not exist during SSR.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!isModalOpen && activeView === 'Create') {
-      setActiveView('All');
-    }
-  }, [isModalOpen, activeView]);
+  // Adjusting state during render rather than in an effect: this derives
+  // purely from props and existing state, so no extra paint is needed.
+  if (!isModalOpen && activeView === 'Create') {
+    setActiveView('All');
+  }
 
   const actions = [
     {

@@ -42,7 +42,7 @@ export async function getAuthToken(): Promise<string | null> {
       cachedToken = token;
       tokenExpiry = decodeTokenExpiry(token) ?? Date.now();
       return cachedToken;
-    } catch (error) {
+    } catch {
       cachedToken = null;
       tokenExpiry = 0;
       return null;

@@ -22,7 +22,6 @@ router = APIRouter(
 
 
 @router.post("", response_model=NoteResponse, status_code=status.HTTP_201_CREATED)
-@router.post("/", response_model=NoteResponse, status_code=status.HTTP_201_CREATED)
 def create_note(
     note: NoteCreate,
     user_id: str = Depends(get_user_id), 
@@ -33,7 +32,6 @@ def create_note(
     return created_note
 
 @router.get("", response_model=NoteListResponse)
-@router.get("/", response_model=NoteListResponse)
 def list_notes(
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
@@ -126,7 +124,6 @@ def delete_note(
 
 
 @router.delete("", response_model=NoteDeleteAllResponse)
-@router.delete("/", response_model=NoteDeleteAllResponse)
 def delete_all_notes(
     user_id: str = Depends(get_user_id),
     db: Session = Depends(get_db)

@@ -26,12 +26,15 @@ export default function NoteForm({
   const [tags, setTags] = useState<string[]>(() => initialData?.tags || []);
   const [tagInput, setTagInput] = useState('');
 
+  // Restore a saved draft. localStorage does not exist during server
+  // rendering, so this has to read after mount rather than during render.
   useEffect(() => {
     if (!draftKey) return;
     const savedDraft = window.localStorage.getItem(`mnemonic:draft:${draftKey}`);
     if (!savedDraft) return;
     try {
       const draft = JSON.parse(savedDraft) as NoteCreate;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTitle(draft.title || '');
       setContent(draft.content || '');
       setTags(draft.tags || []);

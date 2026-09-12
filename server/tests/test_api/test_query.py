@@ -22,7 +22,7 @@ class TestSearch:
         create_note(client, "Porsche", "The 911 has a flat-six engine")
 
         response = client.post(
-            "/api/v1/search/", json={"query": "porsche", "min_similarity": 0.0}
+            "/api/v1/search", json={"query": "porsche", "min_similarity": 0.0}
         )
 
         assert response.status_code == 200
@@ -33,17 +33,17 @@ class TestSearch:
 
         as_other_user()
         response = client.post(
-            "/api/v1/search/", json={"query": "private", "min_similarity": 0.0}
+            "/api/v1/search", json={"query": "private", "min_similarity": 0.0}
         )
 
         assert response.status_code == 200
         assert response.json()["results"] == []
 
     def test_blank_query_is_rejected(self, client):
-        assert client.post("/api/v1/search/", json={"query": ""}).status_code == 422
+        assert client.post("/api/v1/search", json={"query": ""}).status_code == 422
 
     def test_oversized_query_is_rejected(self, client):
-        response = client.post("/api/v1/search/", json={"query": "x" * 2001})
+        response = client.post("/api/v1/search", json={"query": "x" * 2001})
         assert response.status_code == 422
 
 
@@ -155,7 +155,7 @@ class TestUpstreamFailures:
 
         monkeypatch.setattr(module.EmbeddingService, "generate_embedding", explode)
 
-        assert client.post("/api/v1/search/", json={"query": "x"}).status_code == 503
+        assert client.post("/api/v1/search", json={"query": "x"}).status_code == 503
 
 
 class TestVoiceQuery:

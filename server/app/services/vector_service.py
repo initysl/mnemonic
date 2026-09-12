@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, defer
 from typing import List
 from app.models.note import Note
 from app.models.note_chunk import NoteChunk
@@ -38,6 +38,10 @@ class VectorService:
         similarity_expr = 1 - NoteChunk.embedding.cosine_distance(query_embedding)
         chunk_results = (
             db.query(NoteChunk, Note, similarity_expr.label('similarity'))
+            # The embedding columns are only used inside the SQL expressions
+            # above; transferring two 384-float vectors per row to Python is
+            # pure waste.
+            .options(defer(NoteChunk.embedding), defer(Note.embedding))
             .join(Note, NoteChunk.note_id == Note.id)
             .filter(Note.user_id == user_id)
             .filter(similarity_expr > similarity_threshold)
@@ -63,6 +67,7 @@ class VectorService:
         legacy_similarity_expr = 1 - Note.embedding.cosine_distance(query_embedding)
         legacy_results = (
             db.query(Note, legacy_similarity_expr.label('similarity'))
+            .options(defer(Note.embedding))
             .outerjoin(NoteChunk, NoteChunk.note_id == Note.id)
             .filter(Note.user_id == user_id)  
             .filter(Note.embedding.isnot(None))

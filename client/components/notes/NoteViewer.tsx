@@ -196,7 +196,7 @@ export default function NoteViewer({
             </div>
 
             <p className='text-neutral-700 dark:text-neutral-300 mb-6'>
-              Are you sure you want to delete "{note?.title}"? This will
+              Are you sure you want to delete &quot;{note?.title}&quot;? This will
               permanently remove the note from your collection.
             </p>
 

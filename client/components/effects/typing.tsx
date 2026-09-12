@@ -19,7 +19,9 @@ export function TypingText({
   onComplete,
 }: TypingTextProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [started, setStarted] = useState(false);
+  // With no delay there is nothing to wait for, so start in the started
+  // state rather than setting it from an effect after the first paint.
+  const [started, setStarted] = useState(delay <= 0);
   const [typedText, setTypedText] = useState(text);
 
   // Start over when the text changes. Adjusting state during render rather
@@ -37,12 +39,10 @@ export function TypingText({
 
   // Handle initial delay
   useEffect(() => {
-    if (delay > 0) {
-      const delayTimeout = setTimeout(() => setStarted(true), delay);
-      return () => clearTimeout(delayTimeout);
-    } else {
-      setStarted(true);
-    }
+    if (delay <= 0) return;
+
+    const delayTimeout = setTimeout(() => setStarted(true), delay);
+    return () => clearTimeout(delayTimeout);
   }, [delay]);
 
   // Handle typing

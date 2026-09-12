@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { RetrievedNote } from '@/types/query';
 import NotesTopBar from '@/components/topbar/NotesTopBar';
 import NoteList from '@/components/notes/NoteList';
@@ -42,13 +42,17 @@ export default function AllNotesPage() {
   const createNote = useCreateNote();
   const updateNote = useUpdateNote();
 
-  // Sync URL params to state (only when URL changes externally)
-  useEffect(() => {
-    if (noteParam !== selectedNoteId) {
-      setSelectedNoteId(noteParam);
-      setMobileViewerOpen(Boolean(noteParam));
-    }
-  }, [noteParam]);
+  // Sync URL params to state when the URL changes externally (back/forward,
+  // a pasted link). Adjusting state during render rather than in an effect:
+  // an effect would paint one frame with the previous note still selected,
+  // and it also keeps `selectedNoteId` out of the dependency list, which
+  // would otherwise re-run this on every local selection change.
+  const [syncedNoteParam, setSyncedNoteParam] = useState(noteParam);
+  if (syncedNoteParam !== noteParam) {
+    setSyncedNoteParam(noteParam);
+    setSelectedNoteId(noteParam);
+    setMobileViewerOpen(Boolean(noteParam));
+  }
 
   // Update URL when selection changes (debounced to prevent loops)
   const updateURL = useCallback(

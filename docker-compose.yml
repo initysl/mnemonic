@@ -34,8 +34,9 @@ services:
       context: ./client
       args:
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
-    env_file:
-      - .env
+    # No env_file here: it would inject POSTGRES_PASSWORD, GROQ_API_KEY and
+    # HF_TOKEN into the web container, which needs none of them. Only the
+    # variables listed below are passed.
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
       APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3000}
