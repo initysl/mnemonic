@@ -2,13 +2,21 @@ services:
   - type: web
     name: mnemonic-api
     runtime: python
-    buildCommand: 'pip install -r requirements.txt'
+    buildCommand: 'pip install -r requirements.txt && alembic upgrade head'
     startCommand: 'uvicorn app.main:app --host 0.0.0.0 --port $PORT'
     envVars:
       - key: DATABASE_URL
         fromDatabase:
           name: mnemonic-db
           property: connectionString
+      # Without this the app falls back to "development", which publicly
+      # serves /docs, /redoc and /openapi.json.
+      - key: ENVIRONMENT
+        value: production
+      # Without this CORS falls back to a default list that includes
+      # http://localhost:3000.
+      - key: CORS_ORIGINS
+        sync: false
       - key: AUTH0_DOMAIN
         sync: false
       - key: GROQ_API_KEY

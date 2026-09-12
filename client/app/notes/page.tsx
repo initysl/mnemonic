@@ -195,10 +195,21 @@ export default function AllNotesPage() {
         />
       </div>
 
-      {/* Main Grid - Desktop */}
-      <div className='hidden lg:grid grid-cols-[420px_1fr] gap-6 px-6 pb-6 pt-6 overflow-hidden'>
+      {/*
+        One tree for both breakpoints. Rendering separate desktop and mobile
+        trees meant every note list, viewer and query panel was mounted twice
+        and only hidden with CSS, doubling React work and DOM nodes, and giving
+        each copy its own pagination state. Placement is done with grid areas
+        so the same nodes can sit in a two-column layout on large screens and a
+        single column on small ones.
+      */}
+      <div className='grid min-h-0 grid-cols-1 grid-rows-[1fr_auto] gap-4 overflow-hidden p-4 lg:grid-cols-[420px_1fr] lg:gap-6 lg:p-6'>
         {/* Notes List */}
-        <section className='overflow-y-auto rounded-2xl bg-white dark:bg-neutral-900 shadow-sm'>
+        <section
+          className={`min-h-0 overflow-y-auto rounded-2xl bg-white shadow-sm dark:bg-neutral-900 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:block ${
+            mobileViewerOpen ? 'hidden' : 'row-start-1'
+          }`}
+        >
           <NoteList
             onSelectNote={handleSelectNote}
             selectedId={selectedNoteId}
@@ -209,74 +220,47 @@ export default function AllNotesPage() {
           />
         </section>
 
-        {/* Right Column: Viewer + Query */}
-        <section className='grid grid-rows-[1fr_auto] gap-4 overflow-hidden'>
-          {/* Viewer */}
-          <div className='overflow-y-auto rounded-2xl bg-white dark:bg-neutral-900 shadow-sm'>
-            <NoteViewer
-              noteId={viewerNoteId}
-              onEditClick={openEditModal}
-              queryResult={queryResult}
-              onAnswerNoteClick={handleAnswerNoteClick}
-              onDeleted={handleDeleted}
-            />
+        {/* Viewer */}
+        <section
+          className={`min-h-0 overflow-y-auto rounded-2xl bg-white shadow-sm dark:bg-neutral-900 lg:col-start-2 lg:row-start-1 lg:block ${
+            mobileViewerOpen ? 'row-start-1' : 'hidden'
+          }`}
+        >
+          {/* Mobile-only back affordance; on large screens both panes are visible. */}
+          <div className='sticky top-0 z-10 flex items-center gap-2 border-b border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900 lg:hidden'>
+            <button
+              type='button'
+              onClick={handleMobileBack}
+              aria-label='Back to notes'
+              className='rounded-lg bg-blue-500 p-2 text-white transition-colors hover:bg-blue-600'
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <span className='text-sm font-medium text-neutral-600 dark:text-neutral-400'>
+              Back to notes
+            </span>
           </div>
-
-          {/* Query */}
-          <div className='rounded-2xl bg-white dark:bg-neutral-900 shadow-sm'>
-            <NoteQuery
-              onSearchResults={handleSearchResults}
-              onVoiceResultSelect={handleVoiceResultSelect}
-              onQueryResult={handleQueryResult}
-            />
-          </div>
+          <NoteViewer
+            noteId={viewerNoteId}
+            onEditClick={openEditModal}
+            queryResult={queryResult}
+            onAnswerNoteClick={handleAnswerNoteClick}
+            onDeleted={handleDeleted}
+          />
         </section>
-      </div>
 
-      {/* Mobile Layout */}
-      <div className='lg:hidden flex flex-col overflow-hidden min-h-0'>
-        {!mobileViewerOpen ? (
-          <>
-            <div className='flex-1 overflow-y-auto py-4'>
-              <NoteList
-                onSelectNote={handleSelectNote}
-                selectedId={selectedNoteId}
-                searchResults={isSearchMode ? searchResults : undefined}
-                searchQuery={searchQuery}
-                onClearSearch={clearSearch}
-                onCreateNote={() => setCreateModalOpen(true)}
-              />
-            </div>
-            <div className='border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
-              <NoteQuery
-                onSearchResults={handleSearchResults}
-                onVoiceResultSelect={handleVoiceResultSelect}
-                onQueryResult={handleQueryResult}
-              />
-            </div>
-          </>
-        ) : (
-          <div className='flex-1 overflow-y-auto bg-white dark:bg-neutral-900'>
-            <div className='sticky top-0 z-10 flex items-center gap-2 p-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900'>
-              <button
-                onClick={handleMobileBack}
-                className='p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors'
-              >
-                <ArrowLeft size={20} />
-              </button>
-              <span className='text-sm font-medium text-neutral-600 dark:text-neutral-400'>
-                Back to notes
-              </span>
-            </div>
-            <NoteViewer
-              noteId={viewerNoteId}
-              onEditClick={openEditModal}
-              queryResult={queryResult}
-              onAnswerNoteClick={handleAnswerNoteClick}
-              onDeleted={handleDeleted}
-            />
-          </div>
-        )}
+        {/* Query */}
+        <div
+          className={`rounded-2xl bg-white shadow-sm dark:bg-neutral-900 lg:col-start-2 lg:row-start-2 lg:block ${
+            mobileViewerOpen ? 'hidden' : 'row-start-2'
+          }`}
+        >
+          <NoteQuery
+            onSearchResults={handleSearchResults}
+            onVoiceResultSelect={handleVoiceResultSelect}
+            onQueryResult={handleQueryResult}
+          />
+        </div>
       </div>
 
       {/* Create Modal */}

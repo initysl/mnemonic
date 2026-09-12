@@ -18,9 +18,22 @@ export function TypingText({
   className = '',
   onComplete,
 }: TypingTextProps) {
-  const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [started, setStarted] = useState(false);
+  const [typedText, setTypedText] = useState(text);
+
+  // Start over when the text changes. Adjusting state during render rather
+  // than in an effect: an effect resets after paint, so a new answer would
+  // flash the previous answer's worth of characters before restarting.
+  if (typedText !== text) {
+    setTypedText(text);
+    setCurrentIndex(0);
+  }
+
+  // Derived rather than accumulated: a reused instance receiving new text used
+  // to keep appending to the previous answer's buffer, rendering the new text
+  // onto the tail of the old one.
+  const displayedText = text.slice(0, currentIndex);
 
   // Handle initial delay
   useEffect(() => {
@@ -38,7 +51,6 @@ export function TypingText({
 
     if (currentIndex < text.length) {
       const timeout = setTimeout(() => {
-        setDisplayedText((prev) => prev + text[currentIndex]);
         setCurrentIndex((prev) => prev + 1);
       }, speed);
 

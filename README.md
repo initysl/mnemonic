@@ -33,8 +33,13 @@ pip install -r requirements.txt
 export DATABASE_URL="postgresql+psycopg2://user:pass@localhost:5432/mnemonic"
 export AUTH0_DOMAIN="your-tenant.auth0.com"
 export AUTH0_AUDIENCE="your-api-audience"
+alembic upgrade head
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+The schema is owned by Alembic, so `alembic upgrade head` is required before
+first run and after pulling schema changes — the app no longer creates tables
+at startup.
 
 API docs: `http://localhost:8000/docs`
 
@@ -55,6 +60,20 @@ npm run dev
 
 App: `http://localhost:3000`
 
+## Tests
+
+```bash
+cd server
+pytest
+```
+
+Pure-logic tests (chunking, embeddings, rate limiting, transcription, LLM
+retries) run anywhere. The API tests need PostgreSQL with `pgvector`: they use
+`TEST_DATABASE_URL` if set, otherwise a `<your database>_test` database that is
+created from your development database as a template — every table is
+truncated before each test. They are skipped, not failed, when no database is
+reachable.
+
 ## Docker
 
 Set the required env vars (Auth0 + AI keys) in your shell or a `.env` file, then run:
@@ -70,6 +89,7 @@ Services:
 
 ## Notes
 
-- The backend requires `DATABASE_URL` at startup.
+- The backend requires `DATABASE_URL` at startup, and the schema to have been
+  migrated with `alembic upgrade head`.
 - Auth0 is required for authenticated endpoints. See `client/README.md` for client-side details.
 - Production toggles: set `ENVIRONMENT=production` to disable docs by default, and configure `CORS_ORIGINS` (comma-separated).

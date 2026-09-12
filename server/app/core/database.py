@@ -6,17 +6,24 @@ from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from sqlalchemy.pool import QueuePool
 from typing import Generator
 from app.utils.logger import logger
+from app.core.settings import get_settings
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL environment variable is not set")
 
+_settings = get_settings()
+
 # Enhanced connection pooling
 engine = create_engine(
     DATABASE_URL,
     poolclass=QueuePool,
-    pool_size=10,          # Increased for production
-    max_overflow=20,       # Allow more overflow connections
+    # Total capacity must cover the threadpool that runs sync handlers,
+    # otherwise requests block on checkout. See Settings.db_pool_size.
+    pool_size=_settings.db_pool_size,
+    max_overflow=_settings.db_max_overflow,
+    # Fail fast rather than tying up a worker for the 30s default.
+    pool_timeout=_settings.db_pool_timeout,
     pool_pre_ping=True,    # Verify connections before using
     pool_recycle=3600,     # Recycle connections after 1 hour
     echo=False,            # Disable SQL logging (use logger instead)

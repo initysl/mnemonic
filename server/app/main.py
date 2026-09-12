@@ -6,11 +6,16 @@ from app.utils.logger import logger
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from contextlib import asynccontextmanager
-from app.core.database import check_db_health, ensure_pgvector_extension, engine, Base
+from app.core.database import check_db_health, ensure_pgvector_extension
 from app.api.v1 import api_router
 from app.core.settings import get_settings
 from app.core.middleware import RequestIDMiddleware, TimingMiddleware
 from app.core.rate_limit import RateLimiter, RateLimitMiddleware
+from app.utils.exceptions import (
+    EmbeddingGenerationError,
+    LLMReasoningError,
+    MnemonicException,
+)
 
 settings = get_settings()
 
@@ -27,10 +32,20 @@ async def lifespan(app: FastAPI):
     
     ensure_pgvector_extension()
 
-    # Create tables
-    Base.metadata.create_all(bind=engine)
-    logger.info("Database tables initialized")
-    
+    if settings.web_concurrency > 1:
+        logger.warning(
+            "Running %s workers with the in-memory rate limiter: each worker "
+            "keeps its own counters, so the effective limit is %s requests per "
+            "minute per client, not %s. Use a shared store such as Redis.",
+            settings.web_concurrency,
+            settings.rate_limit_per_minute * settings.web_concurrency,
+            settings.rate_limit_per_minute,
+        )
+
+    # Schema is owned by Alembic ("alembic upgrade head"), not by create_all():
+    # create_all never applies column changes to an existing database and never
+    # creates the HNSW indexes the similarity search depends on.
+
     yield
     
     logger.info("Shutting down Mnemonic API...")
@@ -49,10 +64,14 @@ app = FastAPI(
 )
 
 
-app.add_middleware(
-    RateLimitMiddleware,
-    rate_limiter=RateLimiter(settings.rate_limit_per_minute),
+# Named rather than constructed inline so its state can be inspected and
+# reset (the counters are process-global mutable state).
+rate_limiter = RateLimiter(
+    settings.rate_limit_per_minute,
+    trusted_proxy_hops=settings.trusted_proxy_hops,
 )
+
+app.add_middleware(RateLimitMiddleware, rate_limiter=rate_limiter)
 app.add_middleware(TimingMiddleware)
 app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
@@ -62,6 +81,25 @@ app.add_middleware(
     allow_methods=settings.cors_methods_list,
     allow_headers=settings.cors_headers_list,
 )
+
+
+@app.exception_handler(EmbeddingGenerationError)
+@app.exception_handler(LLMReasoningError)
+async def upstream_service_exception_handler(request: Request, exc: MnemonicException):
+    """
+    An AI provider failed, which is an upstream outage rather than a bug.
+    Reported as 503 with a retry hint so the client can say so, instead of the
+    opaque 500 these used to produce.
+    """
+    logger.error("Upstream AI service failed: %s", exc.message, exc_info=True)
+    return JSONResponse(
+        status_code=503,
+        content={
+            "detail": "An AI service is temporarily unavailable. Please try again.",
+            "request_id": getattr(request.state, "request_id", None),
+        },
+        headers={"Retry-After": "10"},
+    )
 
 
 # Global exception handler

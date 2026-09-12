@@ -1,22 +1,48 @@
 import os
 import re
+import groq
 from groq import Groq
 from typing import List, Dict, Any
-from tenacity import retry, wait_exponential, stop_after_attempt
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    wait_exponential,
+    stop_after_attempt,
+)
+
+from app.utils.exceptions import LLMReasoningError
+
+
+# Only failures that a retry can plausibly fix. Retrying everything meant a
+# malformed request, a bad API key or an over-length context was sent three
+# times with backoff -- tripling latency and spend to reach the same error.
+RETRYABLE_ERRORS = (
+    groq.APIConnectionError,
+    groq.APITimeoutError,
+    groq.RateLimitError,
+    groq.InternalServerError,
+)
 
 
 class LLMService:
     """Generate intelligent responses using llama"""
-    
+
     def __init__(self):
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             raise ValueError("GROQ_API_KEY not set in environment")
-        
+
         self.client = Groq(api_key=api_key)
-        self.model = "openai/gpt-oss-20b"  
-    
-    @retry(wait=wait_exponential(min=1, max=10), stop=stop_after_attempt(3))
+        self.model = "openai/gpt-oss-20b"
+
+    @retry(
+        retry=retry_if_exception_type(RETRYABLE_ERRORS),
+        wait=wait_exponential(min=1, max=10),
+        stop=stop_after_attempt(3),
+        # Surface the original error instead of tenacity's RetryError, which
+        # hid the actual cause from the logs.
+        reraise=True,
+    )
     def reason_over_notes(
         self,
         query: str,
@@ -111,8 +137,12 @@ class LLMService:
                 "cited_notes": cited_notes
             }
         
+        except RETRYABLE_ERRORS:
+            # Let the retry decorator see these; if it has exhausted its
+            # attempts the original error propagates to the caller.
+            raise
         except Exception as e:
-            raise Exception(f"LLM reasoning failed: {str(e)}")
+            raise LLMReasoningError(f"LLM reasoning failed: {str(e)}") from e
     
     # def generate_follow_up_questions(
     #     self,
@@ -152,7 +182,7 @@ class LLMService:
     #         return [q.strip('- ').strip() for q in questions if q.strip()][:3]
         
     #     except Exception:
-            return []  # Fail gracefully
+    #         return []  # Fail gracefully
 
 
 # Singleton instance

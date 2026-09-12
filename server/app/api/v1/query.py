@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 import time
 from app.core.database import get_db
-from app.core.auth import get_user_id  
+from app.core.auth import get_user_id
 from app.services.voice_service import voice_service
 from app.services.embedding_service import embedding_service
 from app.services.vector_service import vector_service
@@ -15,87 +15,112 @@ router = APIRouter(
     tags=["query"],
 )
 
-@router.post("/text", response_model=QueryResponse)
-def text_query(
-    request: QueryRequest,
-    user_id: str = Depends(get_user_id),  # Get user_id from Auth0 token
-    db: Session = Depends(get_db)
-):
+
+def _confidence_for(similarity: Optional[float]) -> str:
+    if similarity is None:
+        return "low"
+    if similarity > 0.7:
+        return "high"
+    if similarity > 0.5:
+        return "medium"
+    return "low"
+
+
+def _answer_query(
+    db: Session,
+    user_id: str,
+    query_text: str,
+    top_k: int,
+    min_similarity: float,
+    started_at: float,
+) -> QueryResponse:
     """
-    Enhanced text query with LLM reasoning (user's notes only)
-    
-    Pipeline:
-    1. Generate embedding for query
+    Shared retrieval-and-reasoning pipeline for text and voice queries.
+
+    1. Generate embedding for the query
     2. Search similar notes (user's notes only)
-    3. LLM synthesizes answer from notes
+    3. LLM synthesizes an answer from those notes
+
+    The database session is released before the LLM call: that call takes
+    seconds, and holding a pooled connection across it exhausts the pool well
+    below the threadpool's concurrency.
     """
-    start_time = time.time()
-    
-    # 1. Generate embedding
-    query_embedding = embedding_service.generate_embedding(request.query)
-    
-    # 2. Search similar notes (filtered by user_id)
+    query_embedding = embedding_service.generate_embedding(query_text)
+
     results = vector_service.search_similar_notes(
         db=db,
         user_id=user_id,  # Only search user's notes
         query_embedding=query_embedding,
-        top_k=request.top_k,
-        similarity_threshold=request.min_similarity
+        top_k=top_k,
+        similarity_threshold=min_similarity,
     )
-    
-    # Format notes for LLM
-    retrieved_notes_data = [
-        {
-            "id": str(match.note.id),
-            "title": match.note.title,
-            "content": match.excerpt,
-            "tags": match.note.tags,
-            "similarity_score": round(match.similarity, 3),
-        }
-        for match in results
-    ]
-    
-    # 3. LLM reasoning
-    llm_response = llm_service.reason_over_notes(
-        query=request.query,
-        retrieved_notes=retrieved_notes_data
-    )
-    
-    # Determine confidence
-    if results and results[0].similarity > 0.7:
-        confidence = "high"
-    elif results and results[0].similarity > 0.5:
-        confidence = "medium"
-    else:
-        confidence = "low"
-    
-    # Format response
+
+    # Materialise everything needed from the ORM objects while the session is
+    # still open, so nothing lazy-loads after it is released.
     retrieved_notes = [
         RetrievedNote(
             id=match.note.id,
             title=match.note.title,
             content=match.note.content,
-            tags=match.note.tags,
+            tags=list(match.note.tags),
             similarity_score=round(match.similarity, 3),
             created_at=match.note.created_at,
             source_excerpt=match.excerpt,
         )
         for match in results
     ]
-    
-    execution_time = (time.time() - start_time) * 1000
-    
+    confidence = _confidence_for(results[0].similarity if results else None)
+
+    retrieved_notes_data = [
+        {
+            "id": str(note.id),
+            "title": note.title,
+            "content": note.source_excerpt,
+            "tags": note.tags,
+            "similarity_score": note.similarity_score,
+        }
+        for note in retrieved_notes
+    ]
+
+    db.close()
+
+    llm_response = llm_service.reason_over_notes(
+        query=query_text,
+        retrieved_notes=retrieved_notes_data,
+    )
+
+    cited = set(llm_response["cited_notes"])
+    execution_time = (time.time() - started_at) * 1000
+
     return QueryResponse(
-        query=request.query,
+        query=query_text,
         answer=llm_response["answer"],
         confidence=confidence,
         retrieved_notes=retrieved_notes,
-        cited_notes=[note.id for note in retrieved_notes if str(note.id) in llm_response["cited_notes"]],
-        execution_time_ms=round(execution_time, 2)
+        cited_notes=[note.id for note in retrieved_notes if str(note.id) in cited],
+        execution_time_ms=round(execution_time, 2),
     )
 
+
+@router.post("/text", response_model=QueryResponse)
+def text_query(
+    request: QueryRequest,
+    user_id: str = Depends(get_user_id),  # Get user_id from Auth0 token
+    db: Session = Depends(get_db)
+):
+    """Enhanced text query with LLM reasoning (user's notes only)"""
+    return _answer_query(
+        db=db,
+        user_id=user_id,
+        query_text=request.query,
+        top_k=request.top_k,
+        min_similarity=request.min_similarity,
+        started_at=time.time(),
+    )
+
+
 @router.post("/voice", response_model=QueryResponse)
-async def voice_query(
+def voice_query(
     audio: UploadFile = File(..., description="Audio query file"),
     top_k: int = QueryParam(5, ge=1, le=10),
     min_similarity: float = QueryParam(0.3, ge=0.0, le=1.0),
@@ -105,70 +130,32 @@ async def voice_query(
 ):
     """
     Enhanced voice query with LLM reasoning (user's notes only)
-    
-    Pipeline:
-    1. Transcribe audio
-    2. Generate embedding
-    3. Search similar notes (user's notes only)
-    4. LLM synthesizes answer
+
+    Transcribes the audio, then runs the same pipeline as the text query.
+
+    Defined with `def`, not `async def`: every step below is blocking
+    (transcription, embedding, database, LLM), so running it on the event loop
+    would stall every other request for the duration. FastAPI runs sync
+    handlers in a threadpool instead.
     """
-    start_time = time.time()
-    
-    # 1. Transcribe
+    started_at = time.time()
+
     try:
         transcribed_text = voice_service.transcribe_audio(audio, language=language)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    
-    # 2-4. Use same pipeline as text query
-    query_embedding = embedding_service.generate_embedding(transcribed_text)
-    
-    results = vector_service.search_similar_notes(
-        db=db,
-        user_id=user_id,  # Only search user's notes
-        query_embedding=query_embedding,
-        top_k=top_k,
-        similarity_threshold=min_similarity
-    )
-    
-    retrieved_notes_data = [
-        {
-            "id": str(match.note.id),
-            "title": match.note.title,
-            "content": match.excerpt,
-            "tags": match.note.tags,
-            "similarity_score": round(match.similarity, 3),
-        }
-        for match in results
-    ]
-    
-    llm_response = llm_service.reason_over_notes(
-        query=transcribed_text,
-        retrieved_notes=retrieved_notes_data
-    )
-    
-    confidence = "high" if results and results[0].similarity > 0.7 else "medium" if results and results[0].similarity > 0.5 else "low"
-    
-    retrieved_notes = [
-        RetrievedNote(
-            id=match.note.id,
-            title=match.note.title,
-            content=match.note.content,
-            tags=match.note.tags,
-            similarity_score=round(match.similarity, 3),
-            created_at=match.note.created_at,
-            source_excerpt=match.excerpt,
+
+    if not transcribed_text:
+        raise HTTPException(
+            status_code=400,
+            detail="Could not transcribe audio. Please ensure the file contains speech.",
         )
-        for match in results
-    ]
-    
-    execution_time = (time.time() - start_time) * 1000
-    
-    return QueryResponse(
-        query=transcribed_text,
-        answer=llm_response["answer"],
-        confidence=confidence,
-        retrieved_notes=retrieved_notes,
-        cited_notes=[note.id for note in retrieved_notes if str(note.id) in llm_response["cited_notes"]],
-        execution_time_ms=round(execution_time, 2)
+
+    return _answer_query(
+        db=db,
+        user_id=user_id,
+        query_text=transcribed_text,
+        top_k=top_k,
+        min_similarity=min_similarity,
+        started_at=started_at,
     )

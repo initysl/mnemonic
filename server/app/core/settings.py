@@ -21,6 +21,19 @@ class Settings(BaseSettings):
     cors_allow_credentials: bool = Field(default=True, alias="CORS_ALLOW_CREDENTIALS")
     docs_enabled: Optional[bool] = Field(default=None, alias="DOCS_ENABLED")
     rate_limit_per_minute: int = Field(default=60, ge=1, alias="RATE_LIMIT_PER_MINUTE")
+    # Reverse proxies in front of the app whose X-Forwarded-For entries can be
+    # trusted. 1 suits a single platform load balancer; set 0 when the app is
+    # exposed directly, so forged headers are ignored entirely.
+    trusted_proxy_hops: int = Field(default=1, ge=0, alias="TRUSTED_PROXY_HOPS")
+    web_concurrency: int = Field(default=1, ge=1, alias="WEB_CONCURRENCY")
+    # Sync route handlers run in Starlette's threadpool (40 threads by
+    # default), and each one can hold a pooled connection. Sizing the pool
+    # below that width means requests queue on checkout and time out under
+    # load. Keep pool_size + max_overflow >= the threadpool width, while
+    # staying within the database server's max_connections across all workers.
+    db_pool_size: int = Field(default=10, ge=1, alias="DB_POOL_SIZE")
+    db_max_overflow: int = Field(default=30, ge=0, alias="DB_MAX_OVERFLOW")
+    db_pool_timeout: int = Field(default=10, ge=1, alias="DB_POOL_TIMEOUT")
     max_audio_bytes: int = Field(default=10 * 1024 * 1024, ge=1, alias="MAX_AUDIO_BYTES")
 
     @property

@@ -1,0 +1,9 @@
+[tool.pytest.ini_options]
+# Put the server directory on sys.path so tests import app.* and tests.*
+# without needing PYTHONPATH set by hand.
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]

@@ -1,6 +1,9 @@
-from sqlalchemy import Column, String, Text, DateTime, ARRAY
+from sqlalchemy import Column, String, Text, DateTime
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID
+# The dialect-specific ARRAY is required: the generic sqlalchemy.ARRAY raises
+# NotImplementedError from .contains(), which NoteService.get_notes uses for
+# the ?tag= filter. Same underlying column type, so no migration is needed.
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.sql import func
 from pgvector.sqlalchemy import Vector
 import uuid

@@ -66,34 +66,47 @@ export default function NoteViewer({
     );
   }
 
+  // The AI answer is rendered independently of the note request below it.
+  // Returning early while the note loads used to blank out the answer the
+  // user was reading the moment they clicked one of its cited notes.
+  const answer = queryResult && (
+    <div className='border-b border-neutral-200 dark:border-neutral-800 p-4 '>
+      <QueryAnswer result={queryResult} onNoteClick={onAnswerNoteClick} />
+    </div>
+  );
+
   if (isLoading) {
-    return <NoteViewerSkeleton />;
+    return (
+      <>
+        {answer}
+        <NoteViewerSkeleton />
+      </>
+    );
   }
 
   if (noteId && error) {
     return (
-      <div className='flex h-full flex-col items-center justify-center p-8 text-center'>
-        <p className='font-medium text-neutral-700 dark:text-neutral-300'>Couldn’t load this note</p>
-        <button
-          type='button'
-          onClick={() => refetch()}
-          className='mt-3 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800'
-        >
-          Try again
-        </button>
-      </div>
+      <>
+        {answer}
+        <div className='flex h-full flex-col items-center justify-center p-8 text-center'>
+          <p className='font-medium text-neutral-700 dark:text-neutral-300'>Couldn’t load this note</p>
+          <button
+            type='button'
+            onClick={() => refetch()}
+            className='mt-3 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800'
+          >
+            Try again
+          </button>
+        </div>
+      </>
     );
   }
 
-  if (noteId && !note) return null;
+  if (noteId && !note && !queryResult) return null;
 
   return (
     <>
-      {queryResult && (
-        <div className='border-b border-neutral-200 dark:border-neutral-800 p-4 '>
-          <QueryAnswer result={queryResult} onNoteClick={onAnswerNoteClick} />
-        </div>
-      )}
+      {answer}
       <article className='h-full flex flex-col'>
         {note ? (
           <>
